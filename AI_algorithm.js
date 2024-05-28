@@ -28,28 +28,27 @@ let ball_Y;
 // }
 
 function simulateKeyPress(key) {
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
 }
 
 function simulateKeyRelease(key) {
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
+	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
 }
 
 function move() {
-    // Algorithm for moving the paddle based on ball position
-    if (ball_Y < rigthPaddleY)
+	if (ball_Y < rigthPaddleY)
 	{
-        simulateKeyPress('ArrowUp');
-        simulateKeyRelease('ArrowDown');
-    }
+		simulateKeyPress('ArrowUp');
+		simulateKeyRelease('ArrowDown');
+	}
 	else if (ball_Y > rigthPaddleY)
 	{
-        simulateKeyPress('ArrowDown');
-        simulateKeyRelease('ArrowUp');
-    }
+		simulateKeyPress('ArrowDown');
+		simulateKeyRelease('ArrowUp');
+	}
 }
 
-// updateBallPos()
+// function updateBallPos()
 // {
 // 	// ball_Y = getBallPos(); //getBallPos : fonction in game.js
 // 	ball_Y = ballY; //ballY in game.js

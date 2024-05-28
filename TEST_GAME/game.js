@@ -430,18 +430,17 @@
 		gameStarted = false;
 	}
 
-//---------------- //IMPORTANT IA CARO ------------------------------
+//---------------- //CARO IA ------------------------------
 
-// let IA_ballY;
+let IA_ballY;
 
-// updateIA_BallPos()
-// {
-// 	IA_ballY = ballY;
-// 	//console.log("ball pos Y : ", IA_ballY);
-// }
+function updateIA_BallPos()
+{
+	IA_ballY = ballY;
+}
 
-// //updates ball pos only once per sec
-// setInterval(updateIA_BallPos, 1000);
+// updates ball pos only once per sec
+setInterval(updateIA_BallPos, 1000);
 
 function simulateKeyPress(key) {
 	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
@@ -453,21 +452,23 @@ function simulateKeyRelease(key) {
 
 function IA_move_paddle()
 {
-	// if (IA_ballY < rigthPaddleY)
-	if (ballY < rightPaddleY) //TEST
+	if (IA_ballY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
+		return ;
+	else if (IA_ballY < rightPaddleY)
+	// if (ballY < rightPaddleY) //TEST : ballY known in real time
 	{
 		simulateKeyPress('ArrowUp');
 		simulateKeyRelease('ArrowDown');
 	}
-	// else if (IA_ballY > rigthPaddleY)
-	else if (ballY > rightPaddleY) //TEST
+	else if (IA_ballY > rightPaddleY)
+	// else if (ballY > rightPaddleY) //TEST : ballY known in real time
 	{
 		simulateKeyPress('ArrowDown');
 		simulateKeyRelease('ArrowUp');
 	}
 }
 
-//-------------------------------------------------------------------
+// -------------------------------------------------------------------
 
 	// Fonction pour calculer l'image du jeu à chaque frame
 function play() {
@@ -478,11 +479,10 @@ function play() {
 		gameStarted = true;
 	}
 	if (newRound)
+	{
 		displayRound();
-// //IMPORTANT CARO -------------------------------------------------
-// 	while (newscore == 0)
-// 		IA_move_paddle();
-// //----------------------------------------------------------------
+		rightPaddleY = START_LEFT_PADDLE_Y; //CARO //FIX : remise en position de départ
+	}
 	if (newScore)
 		displayScore();
 	if (scoreLeft == 10 || scoreRight == 10)
@@ -502,10 +502,7 @@ function play() {
 	rightPaddleColor = INITIAL_PADDLE_COLOR;
 
 	keyHook();
-//IMPORTANT CARO -------------------------------------------------
-	// while (newscore == 0)
-	IA_move_paddle();
-//----------------------------------------------------------------
+	IA_move_paddle(); //CARO
 	checkPaddleLimits();
 	updateBall();
 	checkPaddleCollision();
