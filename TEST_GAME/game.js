@@ -452,6 +452,18 @@ function simulateKeyRelease(key) {
 
 function IA_move_paddle()
 {
+	/*HERE : au lieu de IA_ballY, lui passer la trajectoire finale
+	présumée de IA_ballY.
+
+	let presumedBallYFinalPos;
+
+	presumedBallYFinalPos = getPresumedIntersection();
+
+	getPresumedIntersection function :
+		- take into account presumedBallYFinalPos - paddle width to be more accurate!
+		- take rebounds into account (calcul d'angles : trajectoire sortante est le mirroir de la trajectoire entrante)
+	*/
+
 	if (IA_ballY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
 		return ;
 	else if (IA_ballY < rightPaddleY)
