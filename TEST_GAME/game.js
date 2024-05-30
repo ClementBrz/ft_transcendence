@@ -450,7 +450,9 @@ function simulateKeyRelease(key) {
 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
 }
 
-function getIntersectionY() //HERE
+let getIntersectionCounter;
+
+function getIntersectionY()
 {
 	let velocityY = BALL_SPEED_Y;
 	let velocityX = BALL_SPEED_X;
@@ -458,30 +460,57 @@ function getIntersectionY() //HERE
 	let intersectionY; //value we are looking for
 	let intersectionX = FIELD_WIDTH - PADDLE_WIDTH;
 
-	let distanceToIntersection = intersectionX - ballX;
-	let timeToIntersection = distanceToIntersection / velocityX;
+	// let distanceToIntersection = intersectionX - ballX;
+	// let timeToIntersection = distanceToIntersection / velocityX;
 	
-	let intersectionWithoutRebounds = ballY + (velocityY * timeToIntersection);
+	let intersectionWithoutRebounds = ballY + (velocityY/*  * timeToIntersection */);
 
 	//if no rebounds
-	if (ballY + (velocityY * timeToIntersection) < FIELD_HEIGHT) //if current pos + vertical displacement < field height == no rebounds
+	if (ballY + (velocityY/*  * timeToIntersection */) < FIELD_HEIGHT) //if current pos + vertical displacement < field height == no rebounds
 			intersectionY = intersectionWithoutRebounds;
 	else //if rebounds
 	{
 			intersectionY = intersectionWithoutRebounds % (2 * FIELD_HEIGHT); //if only one rebound?
 			if (intersectionY > FIELD_HEIGHT) //means the ball is going back down after bounce
-					intersectionY = 2 * FIELD_HEIGHT - intersectionY; //we substract the excess
+				intersectionY = 2 * FIELD_HEIGHT - intersectionY; //we substract the excess
 	}
+
+	getIntersectionCounter++;
+
+	if (intersectionY > FIELD_WIDTH / 2) //TEST
+		intersectionY = intersectionY + BALL_RADIUS;
+	else
+		intersectionY = intersectionY - BALL_RADIUS;
+
+
 
 	return intersectionY;
 }
 
+let intersectionY; //TEST
+
 function IA_move_paddle()
 {
-	let intersectionY = getIntersectionY();
+	drawBall(FIELD_START_X + PADDLE_WIDTH + BALL_RADIUS, FIELD_HEIGHT / 2, BLUE);
+	drawBall(FIELD_END_X - PADDLE_WIDTH - BALL_RADIUS, FIELD_HEIGHT / 2, YELLOW);
+	drawBall(FIELD_WIDTH / 2, FIELD_HEIGHT / 2, PURPLE);
 
+	// if (ballX == FIELD_END_X - PADDLE_WIDTH - BALL_RADIUS/*  || ballX == FIELD_START_X + PADDLE_WIDTH + BALL_RADIUS */)
+	// 	getIntersectionCounter = 0;
+	// if (ballX > FIELD_START_X && ballX < FIELD_END_X - FIELD_WIDTH / 2)
+	// 	getIntersectionCounter = 0;
+
+	// if (ballX == FIELD_WIDTH / 2)
+	// 	getIntersectionCounter = 0;
+	// if (ballY == FIELD_START_Y + BALL_RADIUS || ballY == FIELD_END_Y - BALL_RADIUS);
+	// 	getIntersectionCounter = 0;
+	// if (getIntersectionCounter == 0)
+	intersectionY = getIntersectionY();
 	// if (IA_ballY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
-	if (intersectionY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
+
+	drawBall(FIELD_WIDTH - PADDLE_WIDTH, intersectionY, RED); //draws the intersection point
+
+	if (ballY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
 		return ;
 	// else if (IA_ballY < rightPaddleY)
 	// if (ballY < rightPaddleY) //TEST : ballY known in real time
@@ -509,11 +538,13 @@ function play() {
 		ballSpeedX = BALL_SPEED_X * launchSide;
 		ballSpeedY = BALL_SPEED_Y;
 		gameStarted = true;
+		getIntersectionCounter = 0; //TEST
 	}
 	if (newRound)
 	{
 		displayRound();
-		rightPaddleY = START_LEFT_PADDLE_Y; //CARO //FIX : remise en position de départ
+		rightPaddleY = START_RIGHT_PADDLE_Y;
+		getIntersectionCounter = 0;
 	}
 	if (newScore)
 		displayScore();
