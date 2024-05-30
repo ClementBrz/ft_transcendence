@@ -450,8 +450,6 @@ function simulateKeyRelease(key) {
 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
 }
 
-let getIntersectionCounter;
-
 function getIntersectionY()
 {
 	let velocityY = BALL_SPEED_Y;
@@ -475,44 +473,23 @@ function getIntersectionY()
 				intersectionY = 2 * FIELD_HEIGHT - intersectionY; //we substract the excess
 	}
 
-	getIntersectionCounter++;
-
-	if (intersectionY > FIELD_WIDTH / 2) //TEST
+	if (intersectionY > FIELD_WIDTH / 2) //car sinon le paddle loupe souvent la balle de peu
 		intersectionY = intersectionY + BALL_RADIUS;
 	else
 		intersectionY = intersectionY - BALL_RADIUS;
 
-
-
 	return intersectionY;
 }
 
-let intersectionY; //TEST
-
 function IA_move_paddle()
 {
-	drawBall(FIELD_START_X + PADDLE_WIDTH + BALL_RADIUS, FIELD_HEIGHT / 2, BLUE);
-	drawBall(FIELD_END_X - PADDLE_WIDTH - BALL_RADIUS, FIELD_HEIGHT / 2, YELLOW);
-	drawBall(FIELD_WIDTH / 2, FIELD_HEIGHT / 2, PURPLE);
 
-	// if (ballX == FIELD_END_X - PADDLE_WIDTH - BALL_RADIUS/*  || ballX == FIELD_START_X + PADDLE_WIDTH + BALL_RADIUS */)
-	// 	getIntersectionCounter = 0;
-	// if (ballX > FIELD_START_X && ballX < FIELD_END_X - FIELD_WIDTH / 2)
-	// 	getIntersectionCounter = 0;
-
-	// if (ballX == FIELD_WIDTH / 2)
-	// 	getIntersectionCounter = 0;
-	// if (ballY == FIELD_START_Y + BALL_RADIUS || ballY == FIELD_END_Y - BALL_RADIUS);
-	// 	getIntersectionCounter = 0;
-	// if (getIntersectionCounter == 0)
-	intersectionY = getIntersectionY();
-	// if (IA_ballY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
+	let intersectionY = getIntersectionY();
 
 	drawBall(FIELD_WIDTH - PADDLE_WIDTH, intersectionY, RED); //draws the intersection point
 
 	if (ballY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
 		return ;
-	// else if (IA_ballY < rightPaddleY)
 	// if (ballY < rightPaddleY) //TEST : ballY known in real time
 	else if (intersectionY < rightPaddleY)
 	{
@@ -520,7 +497,6 @@ function IA_move_paddle()
 		simulateKeyPress('ArrowUp');
 		simulateKeyRelease('ArrowDown');
 	}
-	// else if (IA_ballY > rightPaddleY)
 	else if (intersectionY > rightPaddleY)
 	// else if (ballY > rightPaddleY) //TEST : ballY known in real time
 	{
@@ -544,7 +520,6 @@ function play() {
 	{
 		displayRound();
 		rightPaddleY = START_RIGHT_PADDLE_Y;
-		getIntersectionCounter = 0;
 	}
 	if (newScore)
 		displayScore();
