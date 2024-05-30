@@ -450,29 +450,49 @@ function simulateKeyRelease(key) {
 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
 }
 
+function getIntersectionY() //HERE
+{
+	let velocityY = BALL_SPEED_Y;
+	let velocityX = BALL_SPEED_X;
+
+	let intersectionY; //value we are looking for
+	let intersectionX = FIELD_WIDTH - PADDLE_WIDTH;
+
+	let distanceToIntersection = intersectionX - ballX;
+	let timeToIntersection = distanceToIntersection / velocityX;
+	
+	let intersectionWithoutRebounds = ballY + (velocityY * timeToIntersection);
+
+	//if no rebounds
+	if (ballY + (velocityY * timeToIntersection) < FIELD_HEIGHT) //if current pos + vertical displacement < field height == no rebounds
+			intersectionY = intersectionWithoutRebounds;
+	else //if rebounds
+	{
+			intersectionY = intersectionWithoutRebounds % (2 * FIELD_HEIGHT); //if only one rebound?
+			if (intersectionY > FIELD_HEIGHT) //means the ball is going back down after bounce
+					intersectionY = 2 * FIELD_HEIGHT - intersectionY; //we substract the excess
+	}
+
+	return intersectionY;
+}
+
 function IA_move_paddle()
 {
-	/*HERE : au lieu de IA_ballY, lui passer la trajectoire finale
-	présumée de IA_ballY.
+	let intersectionY = getIntersectionY();
 
-	let presumedBallYFinalPos;
-
-	presumedBallYFinalPos = getPresumedIntersection();
-
-	getPresumedIntersection function :
-		- take into account presumedBallYFinalPos - paddle width to be more accurate!
-		- take rebounds into account (calcul d'angles : trajectoire sortante est le mirroir de la trajectoire entrante)
-	*/
-
-	if (IA_ballY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
+	// if (IA_ballY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
+	if (intersectionY == FIELD_HEIGHT / 2) //pour éviter l'epilepsie du début
 		return ;
-	else if (IA_ballY < rightPaddleY)
+	// else if (IA_ballY < rightPaddleY)
 	// if (ballY < rightPaddleY) //TEST : ballY known in real time
+	else if (intersectionY < rightPaddleY)
 	{
+		// while (intersectionY < rightPaddleY)
 		simulateKeyPress('ArrowUp');
 		simulateKeyRelease('ArrowDown');
 	}
-	else if (IA_ballY > rightPaddleY)
+	// else if (IA_ballY > rightPaddleY)
+	else if (intersectionY > rightPaddleY)
 	// else if (ballY > rightPaddleY) //TEST : ballY known in real time
 	{
 		simulateKeyPress('ArrowDown');
