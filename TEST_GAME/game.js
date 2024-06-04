@@ -48,7 +48,7 @@
 	// Pour les paddles
 	const PADDLE_WIDTH			= 50;
 	const PADDLE_HEIGHT			= 100;
-	const PADDLE_SPEED			= 4;
+	let PADDLE_SPEED			= 4; //CARO : changé const par let
 	const INITIAL_PADDLE_COLOR	= GREY;
 	const LEFT_PADDLE_COLOR		= CYAN;
 	const RIGHT_PADDLE_COLOR	= YELLOW;
@@ -60,8 +60,8 @@
 
 	// Pour la balle
 	const BALL_RADIUS			= 10;
-	const BALL_SPEED_X			= 3;
-	const BALL_SPEED_Y			= 3;
+	let BALL_SPEED_X			= 3; //CARO : changé const par let
+	let BALL_SPEED_Y			= 3; //CARO : changé const par let
 	const INITIAL_BALL_COLOR	= WHITE;
 
 	// Pour les round
@@ -433,14 +433,41 @@
 //---------------- //CARO IA ------------------------------
 
 let IA_ballY;
+let IA_ballX;
 
 function updateIA_BallPos()
 {
 	IA_ballY = ballY;
+	IA_ballX = ballX;
 }
 
-// updates ball pos only once per sec
-setInterval(updateIA_BallPos, 1000);
+let EASY = 0;
+let MEDIUM = 1;
+let HARD = 2;
+let DIFFICULTY_LEVEL = MEDIUM; //a modifier par le client
+
+// updates ball pos only once per sec for levels easy and medium
+if (DIFFICULTY_LEVEL == EASY)
+{
+	setInterval(updateIA_BallPos, 1000);
+	//+ ball speed slow
+}
+else if (DIFFICULTY_LEVEL == MEDIUM)
+{
+	setInterval(updateIA_BallPos, 1000);
+	PADDLE_SPEED = 7;
+	BALL_SPEED_X = 6;
+	BALL_SPEED_Y = 6;
+}
+else if (DIFFICULTY_LEVEL == HARD)
+{
+	setInterval(updateIA_BallPos, 0);
+	PADDLE_SPEED = 7;
+	BALL_SPEED_X = 6;
+	BALL_SPEED_Y = 6;
+}
+
+// setInterval(updateIA_BallPos, 1000);
 
 function simulateKeyPress(key) {
 	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
@@ -458,25 +485,26 @@ function getIntersectionY()
 	let intersectionY; //value we are looking for
 	let intersectionX = FIELD_WIDTH - PADDLE_WIDTH;
 
-	// let distanceToIntersection = intersectionX - ballX;
-	// let timeToIntersection = distanceToIntersection / velocityX;
+	let distanceToIntersection = intersectionX - IA_ballX;
+	let timeToIntersection = distanceToIntersection / velocityX;
 	
-	let intersectionWithoutRebounds = ballY + (velocityY/*  * timeToIntersection */);
+	let intersectionWithoutRebounds = IA_ballY + (velocityY * timeToIntersection);
 
 	//if no rebounds
-	if (ballY + (velocityY/*  * timeToIntersection */) < FIELD_HEIGHT) //if current pos + vertical displacement < field height == no rebounds
+	if (intersectionWithoutRebounds < FIELD_HEIGHT) //if current pos + vertical displacement < field height == no rebounds
 			intersectionY = intersectionWithoutRebounds;
 	else //if rebounds
 	{
-			intersectionY = intersectionWithoutRebounds % (2 * FIELD_HEIGHT); //if only one rebound?
+			//intersectionY = intersectionWithoutRebounds % (2 * FIELD_HEIGHT); //if only one rebound?
+			intersectionY = intersectionWithoutRebounds;
 			if (intersectionY > FIELD_HEIGHT) //means the ball is going back down after bounce
 				intersectionY = 2 * FIELD_HEIGHT - intersectionY; //we substract the excess
 	}
 
 	if (intersectionY > FIELD_WIDTH / 2) //car sinon le paddle loupe souvent la balle de peu
-		intersectionY = intersectionY + BALL_RADIUS;
+		intersectionY = intersectionY + (BALL_RADIUS * 2);
 	else
-		intersectionY = intersectionY - BALL_RADIUS;
+		intersectionY = intersectionY - (BALL_RADIUS * 2);
 
 	return intersectionY;
 }
