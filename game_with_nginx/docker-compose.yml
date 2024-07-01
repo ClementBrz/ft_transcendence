@@ -1,0 +1,25 @@
+version: '3'
+services:
+  pong_game:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.pong
+    container_name: pong_game
+    ports:
+      - "5000:5000"
+
+  ai_opponent:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ai
+    container_name: ai_opponent
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "4000:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - pong_game

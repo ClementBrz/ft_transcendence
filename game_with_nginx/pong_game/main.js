@@ -598,16 +598,7 @@ let ia					= false;
 const EASY				= 0;
 const MEDIUM			= 1;
 const HARD				= 2;
-let DIFFICULTY_LEVEL	= EASY; //a modifier par le client
-
-let aiBallPositionX;
-let aiBallPositionY;
-
-function updateAIBallPos()
-{
-	aiBallPositionX = ball.position.x;
-	aiBallPositionY = ball.position.y;
-}
+let DIFFICULTY_LEVEL	= MEDIUM; //a modifier par le client
 
 function setAILevel()
 {
@@ -616,8 +607,6 @@ function setAILevel()
 	{
 		setInterval(updateAIBallPos, 1000);
 		//+ ball speed slow
-		ballSpeedX = 4;
-		ballSpeedY = 4;
 	}
 	else if (DIFFICULTY_LEVEL == MEDIUM)
 	{
@@ -635,6 +624,11 @@ function setAILevel()
 	}
 }
 
+//-----------------------------------
+
+let	DOWN	= 0;
+let	UP		= 1;
+
 function simulateKeyPress(key) {
 	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
 }
@@ -643,55 +637,23 @@ function simulateKeyRelease(key) {
 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
 }
 
-function getIntersectionY()
-{
-	const velocityX = ballSpeedX;
-	const velocityY = ballSpeedY;
-
-	const intersectionX = FIELD_X / 2 - PADDLE_X / 2;
-	let intersectionY; //value we are looking for
-
-	let distanceToIntersection = intersectionX - aiBallPositionX;
-	let timeToIntersection = distanceToIntersection / velocityX;
-	
-	let intersectionWithoutRebounds = aiBallPositionY + (velocityY * timeToIntersection);
-
-	//if no rebounds
-	if (intersectionWithoutRebounds > FIELD_Y / 2 || intersectionWithoutRebounds < - FIELD_Y / 2) //if current pos + vertical displacement < field height == no rebounds
-			intersectionY = intersectionWithoutRebounds;
-	else //if rebounds
-	{
-			//intersectionY = intersectionWithoutRebounds % (2 * FIELD_HEIGHT); //if only one rebound?
-			intersectionY = intersectionWithoutRebounds;
-			if (intersectionY > FIELD_Y / 2) //means the ball is going back down after bounce
-				intersectionY = - (intersectionY - FIELD_Y / 2); //we substract the excess
-			else
-				intersectionY = (intersectionY + FIELD_Y / 2); //we substract the excess
-	}
-
-	// if (intersectionY > FIELD_WIDTH / 2) //car sinon le paddle loupe souvent la balle de peu
-	// 	intersectionY = intersectionY + (BALL_RADIUS * 2);
-	// else
-	// 	intersectionY = intersectionY - (BALL_RADIUS * 2);
-
-	return intersectionY;
-}
-
 function aiMovePaddle()
 {
-
-	let intersectionY = getIntersectionY();
+	//TODO : requete API pour recevoir paddle_action de IA.c
 
 	// drawBall(FIELD_WIDTH - PADDLE_WIDTH, intersectionY, RED); //draws the intersection point
+	/* pour que la ligne du dessus remarche il faudrait qu'en plus de la variable paddle_action
+	ia.c envoie egalement a variable predicted_intersection */
 
 	if (!roundStarted) //pour éviter l'epilepsie du début
 		return ;
-	else if (intersectionY < rightPaddle.position.y)
+
+	if (paddle_action = UP)
 	{
 		simulateKeyPress('ArrowUp');
 		simulateKeyRelease('ArrowDown');
 	}
-	else if (intersectionY > rightPaddle.position.y)
+	else if (paddle_action = DOWN)
 	{
 		simulateKeyPress('ArrowDown');
 		simulateKeyRelease('ArrowUp');
@@ -745,3 +707,37 @@ function aiMovePaddle()
 // Appel de la fonction d'animation
 animate();
 	
+
+//JSON TO SEND INFO TO AI FILE
+
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+const port = 5000; //port sur lequel il doit envoyer l'info : modifier
+
+app.use(bodyParser.json());
+
+// Exemple de variables de jeu
+// let ballPosition = { x: 0, y: 0 };
+// let playerPosition = { x: 0, y: 0 };
+// let iaPosition = { x: 0, y: 0 };
+
+app.get('/game_state', (req, res) => {
+	res.json({
+		PADDLE_Y: paddle_y;
+		paddle_action: paddle_movement;
+	});
+});
+
+app.post('/ia_action', (req, res) => {
+	const action = req.body.action;
+	// Met à jour le jeu en fonction de l'action de l'IA
+	// Par exemple: iaPosition.x += action;
+	aiMovePaddle(action);
+	res.json({ status: "success" });
+});
+
+app.listen(port, '0.0.0.0', () => {
+	console.log(`Server running at http://0.0.0.0:${port}/`);
+});

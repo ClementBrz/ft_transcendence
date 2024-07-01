@@ -1,0 +1,30 @@
+# FROM ubuntu:latest
+
+# node:14 is the node image : replaces the manual installation of node
+FROM node:14
+
+# WORKDIR /app
+
+RUN apt-get update && apt-get install -y build-essential cmake git && apt-get install libcurl4-openssl-dev libcjson-dev -y
+
+RUN git clone https://github.com/DaveGamble/cJSON.git \
+    && cd cJSON \
+    && mkdir build \
+    && cd build \
+    && cmake .. \
+    && make \
+    && make install
+
+# Manually download and install Node.js
+# RUN apt-get update && apt-get install -y curl gnupg \
+#   && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+#   && apt-get install -y nodejs
+
+COPY ai_opponent/ ./
+
+# Compile C program
+#-o AI pour que mon ./a.out s'appelle AI
+RUN cc AI.c -o AI -lcurl -lcjson
+
+# Run the compiled program
+CMD ["./AI"]
