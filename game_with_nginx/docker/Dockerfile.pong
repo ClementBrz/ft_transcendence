@@ -1,13 +1,51 @@
 FROM node:14-slim
+# FROM nginx
+# FROM node:14-alpine
+# FROM nginx:alpine
+
+# FROM node:14-alpine AS build-stage
+
+# Set working directory
+# WORKDIR /app
+
+# # Set the working directory in the container
+# WORKDIR /usr/share/nginx/html
+
+# # Remove default nginx static assets
+# RUN rm -rf ./*
 
 # WORKDIR /app
 
-COPY pong_game/ ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
 #install dependencies
-RUN npm install
+RUN npm install \
+    && npm install vite --save-dev \
+    && npm install three
+
+COPY ../pong_game/ ./
+# COPY pong_game/ /app
+
+# RUN npm run dev
+RUN npm run build
+
+# #install dependencies
+# RUN npm install
 # RUN npm run dev
 # RUN npm install three
 
+
+
+# FROM nginx:alpine AS serve-stage
+
+# # Copy built assets from the build stage to the NGINX serve directory
+# COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+EXPOSE 4000
+
 #run the game
-CMD ["node", "pong_game.js"]
+CMD ["node", "main.js"]
+
+# # Start NGINX
+# CMD ["nginx", "-g", "daemon off;"]

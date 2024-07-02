@@ -725,8 +725,8 @@ app.use(bodyParser.json());
 
 app.get('/game_state', (req, res) => {
 	res.json({
-		PADDLE_Y: paddle_y;
-		paddle_action: paddle_movement;
+		PADDLE_Y: paddle_y,
+		paddle_action: paddle_movement
 	});
 });
 
