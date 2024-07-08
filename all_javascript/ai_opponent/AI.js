@@ -1,49 +1,25 @@
 const DOWN = 0
 const UP = 1
+const DO_NOT_MOVE = 2
 
-let paddle_action;
-
-export function getPaddleAction()
-{
-	console.log("AI.JS PADDLE ACTION = ", paddle_action); //EFFACER
-	return paddle_action;
-}
-
-class GameData
+export class GameData
 {
 	constructor()
 	{
-		this.ball_x = 0;
-		this.ball_y = 0;
-		this.ball_speed_x = 0; // Assign default values or parameters
-		this.ball_speed_y = 0;
-		this.paddle_x = 0;
-		this.paddle_y = 0;
-		this.field_x = 0;
-		this.field_y = 0;
+		this.ball_x = undefined;
+		this.ball_y = undefined;
+		// this.ball_z = undefined;
+		this.ball_speed_x = undefined;
+		this.ball_speed_y = undefined;
+		// this.ball_speed_z = undefined;
+		this.paddle_x = undefined;
+		this.paddle_y = undefined;
+		// this.paddle_z = undefined;
+		this.field_x = undefined;
+		this.field_y = undefined;
+		// this.field_z = undefined;
 	}
 }
-
-import { ball, leftPaddle, ballSpeedX, ballSpeedY, FIELD_X, FIELD_Y } from '../pong_game/main.js';
-
-function	get_game_data(data)
-{	
-	data.ball_x = ball.position.x; //not sure I need it
-	data.ball_y = ball.position.y;
-	data.ball_speed_x = ballSpeedX;
-	data.ball_speed_y = ballSpeedY;
-	data.paddle_x = leftPaddle.position.x;
-	data.paddle_y = leftPaddle.position.y;
-	data.field_x = FIELD_X;
-	data.field_y = FIELD_Y;
-}
-
-/* Prend en parametres l'action (le movement du paddle apres calculs de l'IA)
-et donc renvoie la nouvelle position du paddle IA au jeu pour etre affiche */
-// function	send_ai_action(action)
-// {
-// 	export { action };
-// }
 
 function	predict_ball_paddle_intersection(data)
 {
@@ -78,78 +54,52 @@ function	predict_ball_paddle_intersection(data)
 
 function	decide_paddle_movement(paddle_y, predicted_intersection)
 {
+	// console.log("----paddle_y---- = ", paddle_y); //effacer
+	// console.log("----predicted_intersection---- = ", predicted_intersection); //effacer
+
 	if (paddle_y < predicted_intersection)
+	{
+		// console.log("Ball_Y > Paddle_Y"); //effacer
 		return UP;
+	}
 	else if (paddle_y > predicted_intersection)
+	{
+		// console.log("Ball_Y < Paddle_Y"); //effacer
 		return DOWN;
-	//else : on bouge pas
+	}
+	else
+	{
+		// console.log("Ball_Y == Paddle_Y"); //effacer
+		return DO_NOT_MOVE;
+	}
 }
 
 function	ai_action(data)
 {
-	// reprendre logique IA du jeu 3d et non 2d car differents noms de variables
 	let predicted_intersection = predict_ball_paddle_intersection(data);
-	let paddle_movement = decide_paddle_movement(data.paddle_y, predicted_intersection); //UP ou DOWN (voir define)
-	console.log("AI.JS IN AI_ACTION FUNCTION PADDLE ACTION = ", paddle_movement); //EFFACER
-	
-	//update paddle position waiting for data to be updated every second
-	console.log("PADDLE_Y = ", data.paddle_y); //EFFACER
-	console.log("BALL POSITION Y = ", data.ball_y); //EFFACER
-	if (paddle_movement = DOWN);
-		data.paddle_y--;
-	if (paddle_movement = UP);
-		data.paddle_y++;
+	let paddle_movement = decide_paddle_movement(data.paddle_y, predicted_intersection);
+
 	return paddle_movement;
 }
 
-// /* Requests the game info needed (the ball's position) once per second
-// and send backs continuously the position of the AI palet to be displayed. */
-// function main()
-// {
-// 	let data = new GameData();
-// 	let last_time = Date.now();
+import { update_game_data } from '../pong_game/main.js';
 
-// 	while(1) // This created a pb!!!
-// 	{
-// 		const current_time = Date.now();
-// 		if ((current_time - last_time) >= 1000) // Once per second
-// 		{
-// 			// data = get_game_data();
-// 			get_game_data(data);
-// 			last_time = current_time;
-// 		}
-
-// 		paddle_action = ai_action(data);
-// 		console.log("AI.JS IN MAIN FUNCTION PADDLE ACTION = ", paddle_action); //EFFACER
-
-// 		// send_ai_action(paddle_movement);
-// 		/*send un int (position) et en fonction de 
-// 		la position voulue on simule les clicks dans le jeu*/
-// 		// usleep(1000);
-// 	}
-// 	return 0;
-// }
-
-
-function get_game_data_periodically(data) {
-	setInterval(() => {
-		// Assuming get_game_data updates the data object directly
-		get_game_data(data);
-	}, 1000); // Fetch game data once per second
-}
-
-function main()
+export function getPaddleAction()
 {
 	let data = new GameData();
-	get_game_data_periodically(data);
-	paddle_action = ai_action(data);
-	console.log("AI.JS IN MAIN FUNCTION PADDLE ACTION = ", paddle_action); //EFFACER
+	data = update_game_data();
+
+/* 	protection : loop qui lit toute les variables dans data :
+	s'il y a des variables non initialisees : error (voir avec marine
+	quoi faire en cas d'erreur). */
+	if (data.ball_y == undefined)
+	{
+		console.log("ERROR");
+		return 3;
+	}
+
+
+	let paddle_action = ai_action(data);
+	// console.log("PADDLE ACTION = ", paddle_action); //EFFACER
+	return paddle_action;
 }
-
-main();
-
-/*FIX:
-I took away the while loop in my main but then it seems like I only enter my 
-main once. I need my AI file to run for as long as the main.js file runs. 
-Maybe I should take away the main and call the different functions only from main.js?
-*/

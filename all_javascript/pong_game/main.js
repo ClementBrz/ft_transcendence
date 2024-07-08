@@ -35,40 +35,40 @@ let game			= true;
 /******************************** Les etoiles **************************************/
 /***********************************************************************************/
 
-	const orbitRadius = 15;
-	let angle0 = 0;
+	// const orbitRadius = 15;
+	// let angle0 = 0;
 
-	var objloader = new OBJLoader();
-	objloader.load(
-		'star.obj',
-		function (star0) {
-			star0.position.set(0, 0, 10);
-			star0.scale.set(0.25, 0.25, 0.25);
-			scene.add(star0);
-			function animation() {
-				requestAnimationFrame(animation);
-				star0.rotation.x += 0.01; // Faire tourner l'objet autour de l'axe x
-				star0.rotation.y += 0.01; // Faire tourner l'objet autour de l'axe y
-				star0.rotation.z += 0.10; // Faire tourner l'objet autour de l'axe y
-				renderer.render(scene, camera);
-				const x = orbitRadius * Math.cos(angle0);
-				const y = orbitRadius * Math.sin(angle0);
+	// var objloader = new OBJLoader();
+	// objloader.load(
+	// 	'star.obj',
+	// 	function (star0) {
+	// 		star0.position.set(0, 0, 10);
+	// 		star0.scale.set(0.25, 0.25, 0.25);
+	// 		scene.add(star0);
+	// 		function animation() {
+	// 			requestAnimationFrame(animation);
+	// 			star0.rotation.x += 0.01; // Faire tourner l'objet autour de l'axe x
+	// 			star0.rotation.y += 0.01; // Faire tourner l'objet autour de l'axe y
+	// 			star0.rotation.z += 0.10; // Faire tourner l'objet autour de l'axe y
+	// 			renderer.render(scene, camera);
+	// 			const x = orbitRadius * Math.cos(angle0);
+	// 			const y = orbitRadius * Math.sin(angle0);
 			
-				// Mettre à jour la position de l'objet
-				star0.position.set(x, y, 10);
+	// 			// Mettre à jour la position de l'objet
+	// 			star0.position.set(x, y, 10);
 			
-				// Augmenter l'angle pour la prochaine trame de rendu
-				angle0 += 0.01;
-				}
-				animation();
-		},
-		function (xhr) {
-			console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-		},
-		function (error) {
-			console.log('An error happened', error);
-		}
-	);
+	// 			// Augmenter l'angle pour la prochaine trame de rendu
+	// 			angle0 += 0.01;
+	// 			}
+	// 			animation();
+	// 	},
+	// 	function (xhr) {
+	// 		console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+	// 	},
+	// 	function (error) {
+	// 		console.log('An error happened', error);
+	// 	}
+	// );
 
 /***********************************************************************************/
 /******************************** Le terrain  **************************************/
@@ -383,11 +383,14 @@ var textMesh;
 	
 	// Pour réinitialiser le jeu à chaque manche
 	function reset() {
+		rightPaddle.position.y = 0; //FIX: CARO
+		updateGameData(); //CARO: verifier
+
 		ball.position.x = 0;
 		ball.position.y = 0;
 		launchSide *= -1;
-		console.log("Score left: " + scoreLeft);
-		console.log("Score right: " + scoreRight);
+		// console.log("Score left: " + scoreLeft);
+		// console.log("Score right: " + scoreRight);
 		updateScore();
 		roundStarted = false;
 	}
@@ -480,7 +483,7 @@ var textMesh;
 			camera.position.z -= 1;
 			// camera.rotation.z -= 1;
 		}
-		console.log("camera z = " + camera.position.z);
+		// console.log("camera z = " + camera.position.z);
 	});
 	
 // Pour les keys
@@ -490,14 +493,14 @@ var textMesh;
 // Pour détecter l'appui sur une touche
 	
 	document.addEventListener("keydown", function(event) {
-		console.log(event.key + " realsed");
+		// console.log(event.key + " realsed");
 		keysPressed[event.key] = true;
 	});
 
 // Pour détecter le relâchement d'une touche
 
 	document.addEventListener("keyup", function(event) {
-		console.log(event.key + " pressed");
+		// console.log(event.key + " pressed");
 		delete keysPressed[event.key];
 	});
 
@@ -566,16 +569,16 @@ function checkPaddleCollision() {
 
 	// Gérer les collisions avec les bords du terrain pour buts (x)
 	function checkGoals() {
-		console.log("check goal : ball.position.x = " + ball.position.x + " ball.position.y = " + ball.position.y);
+		// console.log("check goal : ball.position.x = " + ball.position.x + " ball.position.y = " + ball.position.y);
 		// La balle a atteint le bord gauche, réinitialiser la position
 		if (ball.position.x + BALL_RATIO + 5 < - FIELD_X / 2) {
 			scoreRight++;
-			console.log("Point pour right");
+			// console.log("Point pour right");
 		}
 		// La balle a atteint le bord droit, réinitialiser la position
 		else if (ball.position.x - BALL_RATIO - 5 > FIELD_X / 2) {
 			scoreLeft++;
-			console.log("Point pour left");
+			// console.log("Point pour left");
 		}
 		else
 			return;
@@ -641,7 +644,6 @@ function aiMovePaddle()
 	ia.c envoie egalement a variable predicted_intersection */
 
 	let paddle_action = getPaddleAction();
-	console.log("MAIN.JS PADDLE ACTION = ", paddle_action); //EFFACER
 
 	if (!roundStarted) //pour éviter l'epilepsie du début
 		return ;
@@ -650,22 +652,48 @@ function aiMovePaddle()
 	{
 		simulateKeyPress('ArrowUp');
 		simulateKeyRelease('ArrowDown');
-		// rightPaddle.position.y++;
-
-		// console.log("PADDLE_ACTION = DOWN") //effacer
 	}
 	else if (paddle_action == DOWN)
 	{
 		simulateKeyPress('ArrowDown');
 		simulateKeyRelease('ArrowUp');
-		// rightPaddle.position.y--;
-
-		// console.log("PADDLE_ACTION = UP") //effacer
 	}
-	console.log("PADDLE_POSITION.Y = ", rightPaddle.position.y) //effacer
 }
 
-export { ball, leftPaddle, ballSpeedX, ballSpeedY, FIELD_X, FIELD_Y };
+import { GameData } from '../ai_opponent/AI.js';
+
+let data = new GameData();
+
+function updateGameData()
+{
+	data.ball_x = ball.position.x;
+	data.ball_y = ball.position.y;
+	// data.ball_z = BALL_POSITION_Z;
+	data.ball_speed_x = ballSpeedX;
+	data.ball_speed_y = ballSpeedY;
+	// data.ball_speed_z = ballSpeedZ;
+	data.paddle_x = rightPaddle.position.x;
+	data.paddle_y = rightPaddle.position.y;
+	// data.paddle_z = rightPaddle.position.z;
+	data.field_x = FIELD_X;
+	data.field_y = FIELD_Y;
+	// data.field_z = FIELD_Z;
+}
+
+function update_game_data_periodically()
+{
+	// Update data immediately before starting the interval
+	updateGameData();
+
+	setInterval(() => {
+		updateGameData();
+	}, 1000); // Fetch game data once per second
+}
+
+export function update_game_data()
+{
+	return data;
+}
 
 /***********************************************************************************/
 /********************************** Animation **************************************/
@@ -689,20 +717,28 @@ function animate()
 	// if (ball.position.y >= 5 || ball.position.y <= -5) {
 		// 	ball.position.y = 0;
 		// }
+
+	if (!roundStarted && (scoreRight > 0 || scoreLeft > 0)) //CARO : pour que le paddle revienne au milieu du field
+	{
+		// if (roundStarted == true) //pour entrer dans reset qu'une fois
+			reset();
+	}
 	if (keysPressed[SPACE] && !roundStarted)
 	{
-		ballSpeedX = -ballSpeedX;
-		ballSpeedY = -ballSpeedY;
-		ball.position.x = ballSpeedX;
-		ball.position.y = ballSpeedY;
+		// ballSpeedX = -ballSpeedX;
+		// ballSpeedY = -ballSpeedY;
+		// ball.position.x = ballSpeedX;
+		// ball.position.y = ballSpeedY;
 		roundStarted = true;
+		// data = updateGameData(); //CARO
 	}
-	if (game)
+	if (game)//while no one has won 10 rounds yet
 	{
 		keyHook();
 		if (roundStarted)
 		{
 			updateBall();
+			update_game_data_periodically(data);
 			aiMovePaddle();
 		}
 		checkPaddleLimits();
@@ -712,16 +748,9 @@ function animate()
 			checkGoals();
 	}
 	// Rendre la scène
-//EFFACER ------------------------------------------------
-	// console.log(scene); //EFFACER
-	// scene.children.forEach(object => {
-	// 	console.log(`Name: ${object.name}, Type: ${object.type}, Position: x=${object.position.x}, y=${object.position.y}, z=${object.position.z}`);
-	// });
-//FIN EFFACER ------------------------------------------------
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);
 }
 
 // Appel de la fonction d'animation
 animate();
-
