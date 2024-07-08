@@ -607,18 +607,20 @@ function setAILevel()
 // updates ball pos only once per sec for levels easy and medium
 	if (DIFFICULTY_LEVEL == EASY)
 	{
-		ballSpeedX = 4;
-		ballSpeedY = 4;
+		ballSpeedX = 3;
+		ballSpeedY = 3;
 	}
 	else if (DIFFICULTY_LEVEL == MEDIUM)
 	{
-		ballSpeedX = 5;
-		ballSpeedY = 5;
+		ballSpeedX = 4;
+		ballSpeedY = 4;
+		//change both paddles' speed? ca permettrait a l'IA de compenser le fait qu'elle puisse seulement voir le heu une fois par seconde
 	}
 	else if (DIFFICULTY_LEVEL == HARD)
 	{
 		ballSpeedX = 6;
 		ballSpeedY = 6;
+		//change both paddles' speed? ca permettrait a l'IA de compenser le fait qu'elle puisse seulement voir le heu une fois par seconde
 	}
 }
 
@@ -668,16 +670,15 @@ function updateGameData()
 {
 	data.ball_x = ball.position.x;
 	data.ball_y = ball.position.y;
-	// data.ball_z = BALL_POSITION_Z;
-	data.ball_speed_x = ballSpeedX;
-	data.ball_speed_y = ballSpeedY;
-	// data.ball_speed_z = ballSpeedZ;
+
+	data.ball_horizontal = ballSpeedX;
+	data.ball_vertical = ballSpeedY;
+
 	data.paddle_x = rightPaddle.position.x;
 	data.paddle_y = rightPaddle.position.y;
-	// data.paddle_z = rightPaddle.position.z;
-	data.field_x = FIELD_X;
-	data.field_y = FIELD_Y;
-	// data.field_z = FIELD_Z;
+	
+	data.field_width = FIELD_X;
+	data.field_height = FIELD_Y;
 }
 
 function update_game_data_periodically()
@@ -687,7 +688,7 @@ function update_game_data_periodically()
 
 	setInterval(() => {
 		updateGameData();
-	}, 1000); // Fetch game data once per second
+	}, 0); // Fetch game data once per second //IMPORTANT: le repasser de 0 a 1000 qd l'algo marchera parfaitement!!!!
 }
 
 export function update_game_data()
@@ -730,7 +731,6 @@ function animate()
 		// ball.position.x = ballSpeedX;
 		// ball.position.y = ballSpeedY;
 		roundStarted = true;
-		// data = updateGameData(); //CARO
 	}
 	if (game)//while no one has won 10 rounds yet
 	{

@@ -8,40 +8,52 @@ export class GameData
 	{
 		this.ball_x = undefined;
 		this.ball_y = undefined;
-		// this.ball_z = undefined;
-		this.ball_speed_x = undefined;
-		this.ball_speed_y = undefined;
-		// this.ball_speed_z = undefined;
+
+		//velocity
+		this.ball_horizontal = undefined; // positive = movement to the right, negative = movement to the left
+		this.ball_vertical = undefined; // positive = movement up, negative = movement down
+
 		this.paddle_x = undefined;
 		this.paddle_y = undefined;
-		// this.paddle_z = undefined;
-		this.field_x = undefined;
-		this.field_y = undefined;
-		// this.field_z = undefined;
+
+		this.field_width = undefined;
+		this.field_height = undefined;
 	}
 }
 
 function	predict_ball_paddle_intersection(data)
 {
-	let intersectionX = data.field_x / 2 - data.paddle_x / 2;
+	let intersectionX = data.field_width / 2 - data.paddle_x / 2;
 	let intersectionY; //value we are looking for
 
 	let distanceToIntersection = intersectionX - data.ball_x;
-	let timeToIntersection = distanceToIntersection / data.ball_speed_x;
+	let timeToIntersection = distanceToIntersection / data.ball_horizontal;
 	
-	let intersectionWithoutRebounds = data.ball_y + (data.ball_speed_y * timeToIntersection);
+	// let intersectionWithoutRebounds = data.ball_y + (data.ball_vertical * timeToIntersection);
+	let intersectionWithoutRebounds = /* data.ball_y + */ (data.ball_vertical * timeToIntersection) % data.field_height;
+
+	let numberOfBounces = Math.floor(Math.abs(data.ball_vertical * timeToIntersection) / data.field_height);
 
 	//if no rebounds
-	if (intersectionWithoutRebounds > data.field_y / 2 || intersectionWithoutRebounds < - data.field_y / 2) //if current pos + vertical displacement < field height == no rebounds
-			intersectionY = intersectionWithoutRebounds;
+	// if (intersectionWithoutRebounds > data.field_height / 2 || intersectionWithoutRebounds < - data.field_height / 2) //if current pos + vertical displacement < field height == no rebounds
+	if (numberOfBounces % 2 == 0)
+		intersectionY = intersectionWithoutRebounds;
 	else //if rebounds
 	{
-			//intersectionY = intersectionWithoutRebounds % (2 * FIELD_HEIGHT); //if only one rebound?
-			intersectionY = intersectionWithoutRebounds;
-			if (intersectionY > data.field_y / 2) //means the ball is going back down after bounce
-				intersectionY = - (intersectionY - data.field_y / 2); //we substract the excess
+			// intersectionY = intersectionWithoutRebounds % (2 * data.field_height); //if only one rebound?
+			/* intersectionY = intersectionWithoutRebounds;
+			if (intersectionY > data.field_height / 2) //means the ball is going back down after bounce
+			{
+				intersectionY = - (intersectionY - data.field_height / 2); //we substract the excess
+				console.log("BOUNCE + DOWN");
+				//FIX: ne rentre jamais ici!!
+			}
 			else
-				intersectionY = (intersectionY + data.field_y / 2); //we substract the excess
+			{
+				intersectionY = (intersectionY + data.field_height / 2); //we substract the excess
+				console.log("BOUNCE + UP");
+			} */
+			intersectionY = data.field_height - intersectionWithoutRebounds;
 	}
 
 	// if (intersectionY > FIELD_WIDTH / 2) //car sinon le paddle loupe souvent la balle de peu
@@ -49,29 +61,31 @@ function	predict_ball_paddle_intersection(data)
 	// else
 	// 	intersectionY = intersectionY - (BALL_RADIUS * 2);
 
+	// if (intersectionY == intersectionWithoutRebounds) //EFFACER
+	// 	console.log("NO BOUNCE");
+
+
+	if (numberOfBounces % 2 == 0)
+	{
+		if (data.ball_vertical < 0)
+			console.log("BOUNCE + DOWN");
+		else
+			console.log("BOUNCE + UP");
+	}
+	else
+		console.log("NO BOUNCE");
+
 	return intersectionY;
 }
 
 function	decide_paddle_movement(paddle_y, predicted_intersection)
 {
-	// console.log("----paddle_y---- = ", paddle_y); //effacer
-	// console.log("----predicted_intersection---- = ", predicted_intersection); //effacer
-
 	if (paddle_y < predicted_intersection)
-	{
-		// console.log("Ball_Y > Paddle_Y"); //effacer
 		return UP;
-	}
 	else if (paddle_y > predicted_intersection)
-	{
-		// console.log("Ball_Y < Paddle_Y"); //effacer
 		return DOWN;
-	}
 	else
-	{
-		// console.log("Ball_Y == Paddle_Y"); //effacer
 		return DO_NOT_MOVE;
-	}
 }
 
 function	ai_action(data)
@@ -98,8 +112,6 @@ export function getPaddleAction()
 		return 3;
 	}
 
-
 	let paddle_action = ai_action(data);
-	// console.log("PADDLE ACTION = ", paddle_action); //EFFACER
 	return paddle_action;
 }
