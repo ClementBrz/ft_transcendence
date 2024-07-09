@@ -6,66 +6,62 @@ export class GameData
 {
 	constructor()
 	{
-		this.ball_x = undefined;
-		this.ball_y = undefined;
+		// this.ball_x = undefined;
+		// this.ball_y = undefined;
 
 		//velocity
 		this.ball_horizontal = undefined; // positive = movement to the right, negative = movement to the left
 		this.ball_vertical = undefined; // positive = movement up, negative = movement down
 
-		this.paddle_x = undefined;
-		this.paddle_y = undefined;
+		// this.paddle_x = undefined;
+		// this.paddle_y = undefined;
 
-		this.field_width = undefined;
-		this.field_height = undefined;
+		// this.field_width = undefined;
+		// this.field_height = undefined;
 	}
 }
 
 function	predict_ball_paddle_intersection(data)
 {
-	let intersectionX = data.field_width - data.paddle_x;
+	//mettre les variables suivantes dans data
+	let fieldY_upper = 7.5;
+	let fieldY_lower = -7.5;
+	let fieldX_right = 10;
+	let ball_radius = 0.3; //BALL_RATIO dans code marine
+	let paddle_width = 1; //PADDLE_X dans code marine
+
+	let intersectionX = fieldX_right - paddle_width;
 	let intersectionY; //value we are looking for
 
 	let velocityVector = {
-        x: data.ball_horizontal,
-        y: data.ball_vertical
-    };
+		x: data.ball_horizontal,
+		y: data.ball_vertical
+	};
 
-	let time = 0; // = à la rapidité de ma balle
+	let time = 0;
 
 	let displacement = {
-        x: 0,
-        y: 0
-    };
+		x: 0,
+		y: 0
+	};
 
-		console.log("intersectionX = ", intersectionX);
-		console.log("data.ball_x = ", data.ball_x);
-		console.log("data.ball_y = ", data.ball_y);
-		exit(1);
-	
-	while (displacement.x < intersectionX) //!=
+	while (displacement.x < intersectionX)
 	{
-		time = time + 1;
-		console.log("intersectionX = ", intersectionX);
-		console.log("displacement.x = ", displacement.x);
-		console.log("time = ", time);
+		time += 1;
 		displacement.x = velocityVector.x * time;
 		displacement.y = velocityVector.y * time;
+
+		if (time > 10000) //ça a tout réglé mais je vois pas pourquoi displacement.x n'atteindrait jamais intersectionX --> c'est quand la balle a un angle quasi vertical?
+		{  
+			console.error("Infinite loop detected");
+			break;
+		}
 	}
-	console.log("FINI");
-			
-	// let newPosition = {
-	// 	x: data.ball_x + displacement.x,
-	// 	y: data.ball_y + displacement.y
-	// };
 
-	let fieldY_upper = 15;
-	let fieldY_lower = 0;
-
-	if (displacement.y > fieldY_upper || displacement.y < fieldY_lower) //out of bounds
+	intersectionY = displacement.y;
+	if (intersectionY > fieldY_upper || intersectionY < fieldY_lower) //out of bounds
 	{
-		intersectionY = displacement.y;
-		console.log("intersectionY = ", intersectionY);
+		console.log("BOUNCE");
 		while (intersectionY > fieldY_upper || intersectionY < fieldY_lower) //out of bounds)
 		{
 			if (intersectionY > fieldY_upper)
@@ -73,75 +69,27 @@ function	predict_ball_paddle_intersection(data)
 				intersectionY = intersectionY - fieldY_upper;
 				intersectionY = fieldY_upper - intersectionY;
 			}
-			else
+			else if (intersectionY < fieldY_lower)
 			{
 				intersectionY = intersectionY - fieldY_lower;
 				intersectionY = fieldY_lower - intersectionY;
 			}
-			console.log("intersectionY = ", intersectionY);
 		}
-		return intersectionY;
 	}
 	else
-		return displacement.y;
+		console.log("NO BOUNCE");
+
+	console.log("intersectionY = ", intersectionY);
+
+	if (intersectionY > 0) //car sinon le paddle loupe souvent la balle de peu
+		intersectionY = intersectionY + ball_radius;
+	else if (intersectionY < 0)
+		intersectionY = intersectionY - ball_radius;
+
+	console.log("END");
+
+	return intersectionY;
 }
-
-// function	predict_ball_paddle_intersection(data)
-// {
-// 	let intersectionX = data.field_width / 2 - data.paddle_x / 2;
-// 	let intersectionY; //value we are looking for
-
-// 	let distanceToIntersection = intersectionX - data.ball_x;
-// 	let timeToIntersection = distanceToIntersection / data.ball_horizontal;
-	
-// 	// let intersectionWithoutRebounds = data.ball_y + (data.ball_vertical * timeToIntersection);
-// 	let intersectionWithoutRebounds = (data.ball_vertical * timeToIntersection) % data.field_height;
-
-// 	let numberOfBounces = Math.floor(Math.abs(data.ball_vertical * timeToIntersection) / data.field_height);
-
-// 	//if no rebounds
-// 	// if (intersectionWithoutRebounds > data.field_height / 2 || intersectionWithoutRebounds < - data.field_height / 2) //if current pos + vertical displacement < field height == no rebounds
-// 	if (numberOfBounces % 2 == 0)
-// 		intersectionY = intersectionWithoutRebounds;
-// 	else //if rebounds
-// 	{
-// 			// intersectionY = intersectionWithoutRebounds % (2 * data.field_height); //if only one rebound?
-// 			/* intersectionY = intersectionWithoutRebounds;
-// 			if (intersectionY > data.field_height / 2) //means the ball is going back down after bounce
-// 			{
-// 				intersectionY = - (intersectionY - data.field_height / 2); //we substract the excess
-// 				console.log("BOUNCE + DOWN");
-// 				//FIX: ne rentre jamais ici!!
-// 			}
-// 			else
-// 			{
-// 				intersectionY = (intersectionY + data.field_height / 2); //we substract the excess
-// 				console.log("BOUNCE + UP");
-// 			} */
-// 			intersectionY = data.field_height - intersectionWithoutRebounds;
-// 	}
-
-// 	// if (intersectionY > FIELD_WIDTH / 2) //car sinon le paddle loupe souvent la balle de peu
-// 	// 	intersectionY = intersectionY + (BALL_RADIUS * 2);
-// 	// else
-// 	// 	intersectionY = intersectionY - (BALL_RADIUS * 2);
-
-// 	// if (intersectionY == intersectionWithoutRebounds) //EFFACER
-// 	// 	console.log("NO BOUNCE");
-
-
-// 	if (numberOfBounces % 2 == 0)
-// 	{
-// 		if (data.ball_vertical < 0)
-// 			console.log("BOUNCE + DOWN");
-// 		else
-// 			console.log("BOUNCE + UP");
-// 	}
-// 	else
-// 		console.log("NO BOUNCE");
-
-// 	return intersectionY;
-// }
 
 function	decide_paddle_movement(paddle_y, predicted_intersection)
 {

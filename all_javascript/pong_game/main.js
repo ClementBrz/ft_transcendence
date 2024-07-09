@@ -689,7 +689,7 @@ function update_game_data_periodically()
 
 	setInterval(() => {
 		updateGameData();
-	}, 0); // Fetch game data once per second //IMPORTANT: le repasser de 0 a 1000 qd l'algo marchera parfaitement!!!!
+	}, 1000); // Fetch game data once per second
 }
 
 export function update_game_data()
