@@ -647,6 +647,8 @@ function aiMovePaddle()
 	ia.c envoie egalement a variable predicted_intersection */
 
 	let paddle_action = getPaddleAction();
+	if (paddle_action == 42) //ERROR
+		return ; //check avec Marine
 
 	if (!roundStarted) //pour éviter l'epilepsie du début
 		return ;
@@ -669,17 +671,23 @@ let data = new GameData();
 
 function updateGameData()
 {
-	data.ball_x = ball.position.x;
-	data.ball_y = ball.position.y;
-
+	// ball velocity
 	data.ball_horizontal = ballSpeedX;
 	data.ball_vertical = ballSpeedY;
 
-	data.paddle_x = rightPaddle.position.x;
-	data.paddle_y = rightPaddle.position.y;
+	// field's top/bottom right Y coordinate
+	data.fieldY_top = FIELD_POSITION_Y + FIELD_Y / 2;
+	data.fieldY_bottom = FIELD_POSITION_Y - FIELD_Y / 2;
+
+	// field's right bound X coordinate
+	data.fieldX_right = FIELD_POSITION_X + FIELD_X / 2;
+
+	data.ball_radius = BALL_RATIO;
+
+	data.paddle_width = PADDLE_X;
 	
-	data.field_width = FIELD_X;
-	data.field_height = FIELD_Y;
+	// paddle Y coordinate
+	data.paddle_y = rightPaddle.position.y;
 }
 
 function update_game_data_periodically()

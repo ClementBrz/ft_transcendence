@@ -6,31 +6,29 @@ export class GameData
 {
 	constructor()
 	{
-		// this.ball_x = undefined;
-		// this.ball_y = undefined;
-
-		//velocity
+		// ball velocity
 		this.ball_horizontal = undefined; // positive = movement to the right, negative = movement to the left
 		this.ball_vertical = undefined; // positive = movement up, negative = movement down
 
-		// this.paddle_x = undefined;
-		// this.paddle_y = undefined;
+		// field's top/bottom right Y coordinate
+		this.fieldY_top = undefined;
+		this.fieldY_bottom = undefined;
 
-		// this.field_width = undefined;
-		// this.field_height = undefined;
+		// field's right bound X coordinate
+		this.fieldX_right = undefined;
+
+		this.ball_radius = undefined;
+
+		this.paddle_width = undefined;
+
+		// paddle Y coordinate
+		this.paddle_y = undefined;
 	}
 }
 
 function	predict_ball_paddle_intersection(data)
 {
-	//mettre les variables suivantes dans data
-	let fieldY_upper = 7.5;
-	let fieldY_lower = -7.5;
-	let fieldX_right = 10;
-	let ball_radius = 0.3; //BALL_RATIO dans code marine
-	let paddle_width = 1; //PADDLE_X dans code marine
-
-	let intersectionX = fieldX_right - paddle_width;
+	let intersectionX = data.fieldX_right - data.paddle_width;
 	let intersectionY; //value we are looking for
 
 	let velocityVector = {
@@ -59,20 +57,20 @@ function	predict_ball_paddle_intersection(data)
 	}
 
 	intersectionY = displacement.y;
-	if (intersectionY > fieldY_upper || intersectionY < fieldY_lower) //out of bounds
+	if (intersectionY > data.fieldY_top || intersectionY < data.fieldY_bottom) //out of bounds
 	{
 		console.log("BOUNCE");
-		while (intersectionY > fieldY_upper || intersectionY < fieldY_lower) //out of bounds)
+		while (intersectionY > data.fieldY_top || intersectionY < data.fieldY_bottom) //out of bounds)
 		{
-			if (intersectionY > fieldY_upper)
+			if (intersectionY > data.fieldY_top)
 			{
-				intersectionY = intersectionY - fieldY_upper;
-				intersectionY = fieldY_upper - intersectionY;
+				intersectionY = intersectionY - data.fieldY_top;
+				intersectionY = data.fieldY_top - intersectionY;
 			}
-			else if (intersectionY < fieldY_lower)
+			else if (intersectionY < data.fieldY_bottom)
 			{
-				intersectionY = intersectionY - fieldY_lower;
-				intersectionY = fieldY_lower - intersectionY;
+				intersectionY = intersectionY - data.fieldY_bottom;
+				intersectionY = data.fieldY_bottom - intersectionY;
 			}
 		}
 	}
@@ -82,9 +80,9 @@ function	predict_ball_paddle_intersection(data)
 	console.log("intersectionY = ", intersectionY);
 
 	if (intersectionY > 0) //car sinon le paddle loupe souvent la balle de peu
-		intersectionY = intersectionY + ball_radius;
+		intersectionY = intersectionY + data.ball_radius;
 	else if (intersectionY < 0)
-		intersectionY = intersectionY - ball_radius;
+		intersectionY = intersectionY - data.ball_radius;
 
 	console.log("END");
 
@@ -111,6 +109,17 @@ function	ai_action(data)
 
 import { update_game_data } from '../pong_game/main.js';
 
+function checkGameData(data) {
+	for (const [key, value] of Object.entries(data))
+	{
+		if (value === undefined) {
+			console.log(`ERROR: ${key} is undefined`);
+			return false;
+		}
+	}
+	return true;
+}
+
 export function getPaddleAction()
 {
 	let data = new GameData();
@@ -119,11 +128,8 @@ export function getPaddleAction()
 /* 	protection : loop qui lit toute les variables dans data :
 	s'il y a des variables non initialisees : error (voir avec marine
 	quoi faire en cas d'erreur). */
-	if (data.ball_y == undefined)
-	{
-		console.log("ERROR");
-		return 3;
-	}
+	if (!checkGameData(data))
+		return 42;
 
 	let paddle_action = ai_action(data);
 	return paddle_action;
