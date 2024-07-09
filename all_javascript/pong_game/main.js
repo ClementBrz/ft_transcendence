@@ -597,33 +597,31 @@ function checkPaddleCollision() {
 
 let ia					= true;
 
-const EASY				= 0;
+/* const EASY				= 0;
 const MEDIUM			= 1;
 const HARD				= 2;
-// let DIFFICULTY_LEVEL	= EASY; //a modifier par le client
+let DIFFICULTY_LEVEL	= EASY; //a modifier par le client
 
-// function setAILevel()
-// {
-// // updates ball pos only once per sec for levels easy and medium
-// 	if (DIFFICULTY_LEVEL == EASY)
-// 	{
-// 		ballSpeedX = 1;
-// 		ballSpeedY = 1;
-// 		PADDLE_SPEED = 1;
-// 	}
-// 	else if (DIFFICULTY_LEVEL == MEDIUM)
-// 	{
-// 		ballSpeedX = 4;
-// 		ballSpeedY = 4;
-// 		//change both paddles' speed? ca permettrait a l'IA de compenser le fait qu'elle puisse seulement voir le heu une fois par seconde
-// 	}
-// 	else if (DIFFICULTY_LEVEL == HARD)
-// 	{
-// 		ballSpeedX = 6;
-// 		ballSpeedY = 6;
-// 		//change both paddles' speed? ca permettrait a l'IA de compenser le fait qu'elle puisse seulement voir le heu une fois par seconde
-// 	}
-// }
+function setAILevel()
+{
+// updates ball pos only once per sec for levels easy and medium
+//ne change rien car je crois que les vitesses sont contrôlées plus haut par des const!
+	if (DIFFICULTY_LEVEL == EASY)
+	{
+		ballSpeedX = 1;
+		ballSpeedY = 1;
+	}
+	else if (DIFFICULTY_LEVEL == MEDIUM)
+	{
+		ballSpeedX = 3;
+		ballSpeedY = 3;
+	}
+	else if (DIFFICULTY_LEVEL == HARD)
+	{
+		ballSpeedX = 5;
+		ballSpeedY = 5;
+	}
+} */
 
 //-----------------------------------
 
