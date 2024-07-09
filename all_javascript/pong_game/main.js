@@ -168,7 +168,7 @@ let game			= true;
 	const PADDLE_X			= 1;
 	const PADDLE_Y			= 2;
 	const PADDLE_Z			= 0.7;
-	const PADDLE_SPEED		= 0.5;
+	const PADDLE_SPEED		= 0.1; //CARO
 	const PADDLE_POSITION_Y	= 0;
 	const PADDLE_POSITION_Z	= 2 * FIELD_POSITION_Z + PADDLE_Z / 2;
 	
@@ -218,8 +218,8 @@ let game			= true;
 	const BALL_COLOR		= 0xffffff;
 	const BALL_POSITION_X	= 0;
 	const BALL_POSITION_Y	= 0;
-	const BALL_SPEED_X		= 0.40;
-	const BALL_SPEED_Y		= 0.40;
+	const BALL_SPEED_X		= 0.1; //CARO
+	const BALL_SPEED_Y		= 0.1; //CARO
 	let ballSpeedX			= BALL_SPEED_X;
 	let ballSpeedY			= BALL_SPEED_Y;
 	const BALL_POSITION_Z	= FIELD_Z + BALL_RATIO;
@@ -600,29 +600,30 @@ let ia					= true;
 const EASY				= 0;
 const MEDIUM			= 1;
 const HARD				= 2;
-let DIFFICULTY_LEVEL	= EASY; //a modifier par le client
+// let DIFFICULTY_LEVEL	= EASY; //a modifier par le client
 
-function setAILevel()
-{
-// updates ball pos only once per sec for levels easy and medium
-	if (DIFFICULTY_LEVEL == EASY)
-	{
-		ballSpeedX = 3;
-		ballSpeedY = 3;
-	}
-	else if (DIFFICULTY_LEVEL == MEDIUM)
-	{
-		ballSpeedX = 4;
-		ballSpeedY = 4;
-		//change both paddles' speed? ca permettrait a l'IA de compenser le fait qu'elle puisse seulement voir le heu une fois par seconde
-	}
-	else if (DIFFICULTY_LEVEL == HARD)
-	{
-		ballSpeedX = 6;
-		ballSpeedY = 6;
-		//change both paddles' speed? ca permettrait a l'IA de compenser le fait qu'elle puisse seulement voir le heu une fois par seconde
-	}
-}
+// function setAILevel()
+// {
+// // updates ball pos only once per sec for levels easy and medium
+// 	if (DIFFICULTY_LEVEL == EASY)
+// 	{
+// 		ballSpeedX = 1;
+// 		ballSpeedY = 1;
+// 		PADDLE_SPEED = 1;
+// 	}
+// 	else if (DIFFICULTY_LEVEL == MEDIUM)
+// 	{
+// 		ballSpeedX = 4;
+// 		ballSpeedY = 4;
+// 		//change both paddles' speed? ca permettrait a l'IA de compenser le fait qu'elle puisse seulement voir le heu une fois par seconde
+// 	}
+// 	else if (DIFFICULTY_LEVEL == HARD)
+// 	{
+// 		ballSpeedX = 6;
+// 		ballSpeedY = 6;
+// 		//change both paddles' speed? ca permettrait a l'IA de compenser le fait qu'elle puisse seulement voir le heu une fois par seconde
+// 	}
+// }
 
 //-----------------------------------
 

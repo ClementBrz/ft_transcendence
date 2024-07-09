@@ -23,60 +23,125 @@ export class GameData
 
 function	predict_ball_paddle_intersection(data)
 {
-	let intersectionX = data.field_width / 2 - data.paddle_x / 2;
+	let intersectionX = data.field_width - data.paddle_x;
 	let intersectionY; //value we are looking for
 
-	let distanceToIntersection = intersectionX - data.ball_x;
-	let timeToIntersection = distanceToIntersection / data.ball_horizontal;
+	let velocityVector = {
+        x: data.ball_horizontal,
+        y: data.ball_vertical
+    };
+
+	let time = 0; // = à la rapidité de ma balle
+
+	let displacement = {
+        x: 0,
+        y: 0
+    };
+
+		console.log("intersectionX = ", intersectionX);
+		console.log("data.ball_x = ", data.ball_x);
+		console.log("data.ball_y = ", data.ball_y);
+		exit(1);
 	
-	// let intersectionWithoutRebounds = data.ball_y + (data.ball_vertical * timeToIntersection);
-	let intersectionWithoutRebounds = /* data.ball_y + */ (data.ball_vertical * timeToIntersection) % data.field_height;
-
-	let numberOfBounces = Math.floor(Math.abs(data.ball_vertical * timeToIntersection) / data.field_height);
-
-	//if no rebounds
-	// if (intersectionWithoutRebounds > data.field_height / 2 || intersectionWithoutRebounds < - data.field_height / 2) //if current pos + vertical displacement < field height == no rebounds
-	if (numberOfBounces % 2 == 0)
-		intersectionY = intersectionWithoutRebounds;
-	else //if rebounds
+	while (displacement.x < intersectionX) //!=
 	{
-			// intersectionY = intersectionWithoutRebounds % (2 * data.field_height); //if only one rebound?
-			/* intersectionY = intersectionWithoutRebounds;
-			if (intersectionY > data.field_height / 2) //means the ball is going back down after bounce
+		time = time + 1;
+		console.log("intersectionX = ", intersectionX);
+		console.log("displacement.x = ", displacement.x);
+		console.log("time = ", time);
+		displacement.x = velocityVector.x * time;
+		displacement.y = velocityVector.y * time;
+	}
+	console.log("FINI");
+			
+	// let newPosition = {
+	// 	x: data.ball_x + displacement.x,
+	// 	y: data.ball_y + displacement.y
+	// };
+
+	let fieldY_upper = 15;
+	let fieldY_lower = 0;
+
+	if (displacement.y > fieldY_upper || displacement.y < fieldY_lower) //out of bounds
+	{
+		intersectionY = displacement.y;
+		console.log("intersectionY = ", intersectionY);
+		while (intersectionY > fieldY_upper || intersectionY < fieldY_lower) //out of bounds)
+		{
+			if (intersectionY > fieldY_upper)
 			{
-				intersectionY = - (intersectionY - data.field_height / 2); //we substract the excess
-				console.log("BOUNCE + DOWN");
-				//FIX: ne rentre jamais ici!!
+				intersectionY = intersectionY - fieldY_upper;
+				intersectionY = fieldY_upper - intersectionY;
 			}
 			else
 			{
-				intersectionY = (intersectionY + data.field_height / 2); //we substract the excess
-				console.log("BOUNCE + UP");
-			} */
-			intersectionY = data.field_height - intersectionWithoutRebounds;
-	}
-
-	// if (intersectionY > FIELD_WIDTH / 2) //car sinon le paddle loupe souvent la balle de peu
-	// 	intersectionY = intersectionY + (BALL_RADIUS * 2);
-	// else
-	// 	intersectionY = intersectionY - (BALL_RADIUS * 2);
-
-	// if (intersectionY == intersectionWithoutRebounds) //EFFACER
-	// 	console.log("NO BOUNCE");
-
-
-	if (numberOfBounces % 2 == 0)
-	{
-		if (data.ball_vertical < 0)
-			console.log("BOUNCE + DOWN");
-		else
-			console.log("BOUNCE + UP");
+				intersectionY = intersectionY - fieldY_lower;
+				intersectionY = fieldY_lower - intersectionY;
+			}
+			console.log("intersectionY = ", intersectionY);
+		}
+		return intersectionY;
 	}
 	else
-		console.log("NO BOUNCE");
-
-	return intersectionY;
+		return displacement.y;
 }
+
+// function	predict_ball_paddle_intersection(data)
+// {
+// 	let intersectionX = data.field_width / 2 - data.paddle_x / 2;
+// 	let intersectionY; //value we are looking for
+
+// 	let distanceToIntersection = intersectionX - data.ball_x;
+// 	let timeToIntersection = distanceToIntersection / data.ball_horizontal;
+	
+// 	// let intersectionWithoutRebounds = data.ball_y + (data.ball_vertical * timeToIntersection);
+// 	let intersectionWithoutRebounds = (data.ball_vertical * timeToIntersection) % data.field_height;
+
+// 	let numberOfBounces = Math.floor(Math.abs(data.ball_vertical * timeToIntersection) / data.field_height);
+
+// 	//if no rebounds
+// 	// if (intersectionWithoutRebounds > data.field_height / 2 || intersectionWithoutRebounds < - data.field_height / 2) //if current pos + vertical displacement < field height == no rebounds
+// 	if (numberOfBounces % 2 == 0)
+// 		intersectionY = intersectionWithoutRebounds;
+// 	else //if rebounds
+// 	{
+// 			// intersectionY = intersectionWithoutRebounds % (2 * data.field_height); //if only one rebound?
+// 			/* intersectionY = intersectionWithoutRebounds;
+// 			if (intersectionY > data.field_height / 2) //means the ball is going back down after bounce
+// 			{
+// 				intersectionY = - (intersectionY - data.field_height / 2); //we substract the excess
+// 				console.log("BOUNCE + DOWN");
+// 				//FIX: ne rentre jamais ici!!
+// 			}
+// 			else
+// 			{
+// 				intersectionY = (intersectionY + data.field_height / 2); //we substract the excess
+// 				console.log("BOUNCE + UP");
+// 			} */
+// 			intersectionY = data.field_height - intersectionWithoutRebounds;
+// 	}
+
+// 	// if (intersectionY > FIELD_WIDTH / 2) //car sinon le paddle loupe souvent la balle de peu
+// 	// 	intersectionY = intersectionY + (BALL_RADIUS * 2);
+// 	// else
+// 	// 	intersectionY = intersectionY - (BALL_RADIUS * 2);
+
+// 	// if (intersectionY == intersectionWithoutRebounds) //EFFACER
+// 	// 	console.log("NO BOUNCE");
+
+
+// 	if (numberOfBounces % 2 == 0)
+// 	{
+// 		if (data.ball_vertical < 0)
+// 			console.log("BOUNCE + DOWN");
+// 		else
+// 			console.log("BOUNCE + UP");
+// 	}
+// 	else
+// 		console.log("NO BOUNCE");
+
+// 	return intersectionY;
+// }
 
 function	decide_paddle_movement(paddle_y, predicted_intersection)
 {
