@@ -5,7 +5,7 @@ ball :
 # Build the Docker image
 	docker build -t $(IMAGE_NAME) .
 # Run the Docker container
-	docker run --name $(CONTAINER_NAME) -d -p 5000:5000 $(IMAGE_NAME)
+	docker run --name $(CONTAINER_NAME) -d -p 8000:8000 $(IMAGE_NAME)
 	
 # Stop and remove the Docker container
 clean:
@@ -13,5 +13,8 @@ clean:
 	docker rm $(CONTAINER_NAME)
 
 re : clean build run
+
+web :
+	cd django_web_app/merchex && python manage.py runserver
 
 .PHONY:	all clean re

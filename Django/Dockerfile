@@ -14,7 +14,7 @@ WORKDIR /app
 RUN		pip install -r requirements.txt
 
 #voir avec les autres quel port
-EXPOSE 5000
+EXPOSE 8000
 
 # Define environment variable
 ENV PYTHONUNBUFFERED=1
