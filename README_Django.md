@@ -1,6 +1,10 @@
+# PROJET DJANGO
+
+Vu que pour transcendandce on doit respecter la consigne de la single page on n'utilisera pas Django exactement comme ça mais voici les 4 fichiers importants d'un projet Django :
+
 4 fichiers importants :
 
-# models.py
+## models.py
 
 C'est dans ce fichier qu'on déclare des classes. \
 Ex :
@@ -18,7 +22,7 @@ Ex:
 CharField(max_length=10, blank=True)
 ```
 
-# views.py
+## views.py
 
 C'est dans ce fichier qu'on déclare des "vues". Une vue est un mélange entre une fonction et une page web. \
 Ex:
@@ -32,7 +36,7 @@ def dashboard_view(request):
 - On déclare une vue ***dashboard_view*** qui peut prendre des paramètres (ici : request, la requête étant d'essayer d'ouvrir la page web associée à cette vue) et contient deux variables (users et stats qui sont de classe User et Stats). Cette view return une page html (pour afficher la page web associée à cette vue).
 - ***select_related()*** permet de link la classe stats à la classe users (cf ForeignKey)
 
-# urls.py
+## urls.py
 
 On indique dans cette page comment on veut que notre url s'appelle et à quoi il correspond.
 
@@ -46,9 +50,18 @@ Comme on a deux "applications" dans notre projet (l'application dashboard et l'a
 ```python
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('dashboard/', include('dashboard.urls')),  # Inclure les URLs de l'application caro
-    path('jess/', include('jess.urls')),  # Inclure les URLs de l'application jess
+    path('dashboard/', include('dashboard.urls')),  # Inclure les URLs de l'application dashboard
+    path('login/', include('users_manager.urls')),  # Inclure les URLs de l'application users_manager
 ]
 ```
+Ce bout de code signifie qu'on aura 3 paths possibles : \
+http://127.0.0.1:8000/admin \
+http://127.0.0.1:8000/dashboard --> affichera dashboard.html\
+http://127.0.0.1:8000/login
 
-http://127.0.0.1:8000/dashboard
+## Dossier templates
+
+C'est ici que se trouvent les fichiers :
+- dashboard.html : notre page web
+- base.html : contient des bouts de code communs à plusieurs fichiers html pour éviter de les réécrire en boucle (c'est des sorte de #define)
+- styles.css : spécifie les styles utilisés dans tous les fichiers html. Ex: la balise html h1 (pour les titres) prendra la forme de texte rouge avec une taille 10 et une marge de 2cm
