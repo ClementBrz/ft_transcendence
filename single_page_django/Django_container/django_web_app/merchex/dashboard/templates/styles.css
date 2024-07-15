@@ -1,0 +1,41 @@
+/* * { background: red } */
+
+/* body {
+    background-color: powderblue;
+  }
+  h1 {
+    border: 2px solid powderblue;
+    margin: 50px;
+    color: blue;
+  }
+  p {
+    color: red;
+  } */
+
+
+  .pie-chart {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+        green calc(var(--victories) * 1%), 
+        red 0 calc((var(--victories) + var(--defeats)) * 1%)
+    );
+}
+
+.text {
+    position: absolute;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    width: 80%;
+}

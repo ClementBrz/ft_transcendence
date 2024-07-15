@@ -1,0 +1,36 @@
+<!-- Ici j'affiches le user 9 cree aleatoirement par populate_db.py -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Dashboard</h1>
+{% if users %}
+    {% with user=users.9 %}
+        <p>{{ user.nickname }}</p>
+        {% for stat in user.stats.all %}
+
+			<div class="pie-chart" style="--victories: {{ user_stats.nb_of_victories }}%; --defeats: {{ user_stats.nb_of_defeats }}%;">
+				<div class="circle"></div>
+				<div class="text">{{ user_stats.nb_of_victories|floatformat:2 }}% Victories</div>
+				<div class="text">{{ user_stats.nb_of_defeats|floatformat:2 }}% Defeats</div>
+			</div>
+			
+            <p>Victories: {{ stat.nb_of_victories }}</p>
+            <p>Defeats: {{ stat.nb_of_defeats }}</p>
+            <p>Badge: {{ stat.badge }}</p>
+            <p>Ranking Position: {{ stat.ranking_position }}</p>
+            <p>Games Played: {{ stat.nb_of_games_played }}</p>
+			<p>
+				{% if stat.ranking_position <= 10 and stat.ranking_position > 5 %}
+					You are in the top 10 players!
+				{% elif stat.ranking_position <= 5 and stat.ranking_position > 3 %}
+					You are in the top 5 players!
+				{% elif stat.ranking_position <= 3 and stat.ranking_position >= 1 %}
+					You are the top {stat.ranking_position} player!
+				{% endif %}
+			</p>
+        {% endfor %}
+    {% endwith %}
+{% else %}
+    <p>No users found.</p>
+{% endif %}
+{% endblock %}

@@ -2,8 +2,6 @@
 
 Vu que pour transcendandce on doit respecter la consigne de la single page on n'utilisera pas Django exactement comme ça mais voici les 4 fichiers importants d'un projet Django :
 
-4 fichiers importants :
-
 ## models.py
 
 C'est dans ce fichier qu'on déclare des classes. \

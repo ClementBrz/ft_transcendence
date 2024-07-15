@@ -1,0 +1,25 @@
+//TEST pour afficher tous les users
+
+<!-- {% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+	<p>Usernames :</p>
+	 <ul>
+		{% for user in users %}
+			<li>{{ user.id }}: {{ user.name }} ({{ user.nickname }})
+				<ul>
+					{% for stat in user.stats.all %}
+						<li>Victories: {{ stat.nb_of_victories }}</li>
+						<li>Defeats: {{ stat.nb_of_defeats }}</li>
+						<li>Badge: {{ stat.badge }}</li>
+						<li>Ranking Position: {{ stat.ranking_position }}</li>
+						<li>Games Played: {{ stat.nb_of_games_played }}</li>
+					{% endfor %}
+				</ul>
+			</li>
+		{% endfor %}
+	 </ul>
+
+{% endblock %} -->
