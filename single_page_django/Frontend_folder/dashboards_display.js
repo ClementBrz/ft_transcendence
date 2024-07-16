@@ -4,10 +4,10 @@ Dans views.py, on crée une vue qui retourne les données du tableau de bord en 
 
 ---------------------------------------
 from django.http import JsonResponse
-from .models import DashboardData
+from .models import Stats
 
 def get_dashboard_data(request):
-	data = list(DashboardData.objects.all().values())
+	data = list(Stats.objects.all().values())
 	return JsonResponse(data, safe=False)
 ---------------------------------------
 
@@ -18,7 +18,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-	path('api/dashboard-data/', views.get_dashboard_data, name='dashboard-data'),
+	path('api/dashboard/', views.get_dashboard_data, name='dashboard'),
 ]
 ---------------------------------------
 
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function()
 
 function loadDashboardData()
 {
-	fetch('/api/dashboard-data/') //API réglée par Clément
+	fetch('/api/dashboard/') //API réglée par Clément
 		.then(response => response.json())
 		//on met dans data toutes les données qu'on a fetch de ma base de données Django
 		.then(data => {

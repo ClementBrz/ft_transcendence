@@ -62,4 +62,45 @@ http://127.0.0.1:8000/login
 C'est ici que se trouvent les fichiers :
 - dashboard.html : notre page web
 - base.html : contient des bouts de code communs à plusieurs fichiers html pour éviter de les réécrire en boucle (c'est des sorte de #define)
-- styles.css : spécifie les styles utilisés dans tous les fichiers html. Ex: la balise html h1 (pour les titres) prendra la forme de texte rouge avec une taille 10 et une marge de 2cm
+- styles.css : spécifie les styles utilisés dans tous les fichiers html. Ex: la balise html h1 (pour les titres) prendra la forme de texte rouge avec une taille 10 et une marge de 2cm.
+
+&nbsp;
+
+# VERSION SINGLE PAGE :
+
+## views.py
+
+On crée une vue qui retourne les données du tableau de bord en JSON:
+
+```python
+from django.http import JsonResponse
+from .models import Stats
+
+def get_dashboard_data(request):
+	data = list(Stats.objects.all().values())
+	return JsonResponse(data, safe=False)
+```
+
+## urls.py
+
+On ajoute un url pour accéder à cette vue
+
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+	path('api/dashboard/', views.get_dashboard_data, name='dashboard'),
+]
+```
+
+## index.html (single page)
+
+```html
+<body>
+	<div id="dashboard-container"></div>
+	<script src="path to dashboard.js"></script>
+</body>
+```
+
+- ***dashboard-container*** : id utilise dans dashboard_display.js pour recuperer les donnees statistiques
