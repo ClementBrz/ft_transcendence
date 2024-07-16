@@ -53,10 +53,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'merchex.urls'
 
+import os # version single page
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # 'DIRS': [],
+        # version single page
+        'DIRS': [os.path.join(BASE_DIR, 'PATH_TO_INDEX.HTML')], #TODO
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

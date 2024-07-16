@@ -1,38 +1,3 @@
-/* À MODIFIER DANS DJANGO :
-
-Dans views.py, on crée une vue qui retourne les données du tableau de bord en JSON:
-
----------------------------------------
-from django.http import JsonResponse
-from .models import Stats
-
-def get_dashboard_data(request):
-	data = list(Stats.objects.all().values())
-	return JsonResponse(data, safe=False)
----------------------------------------
-
-Dans urls.py on ajoute un url pour accéder à cette vue
-
----------------------------------------
-from django.urls import path
-from . import views
-
-urlpatterns = [
-	path('api/dashboard/', views.get_dashboard_data, name='dashboard'),
-]
----------------------------------------
-
-À MODIFIER DANS LA SINGLE PAGE :
-
----------------------------------------
-<body>
-	<div id="dashboard-container"></div>
-	<script src="path to dashboard.js"></script>
-</body>
----------------------------------------
-*/
-
-
 document.addEventListener('DOMContentLoaded', function()
 {
 	loadDashboardData();

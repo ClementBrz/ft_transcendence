@@ -104,3 +104,16 @@ urlpatterns = [
 ```
 
 - ***dashboard-container*** : id utilise dans dashboard_display.js pour recuperer les donnees statistiques
+
+
+## settings.py (dans merchex/merchex)
+
+```python
+TEMPLATES = [
+    {
+        #...
+        'DIRS': [os.path.join(BASE_DIR, 'PATH_TO_INDEX.HTML')],
+        #...
+    },
+]
+```
