@@ -60,7 +60,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # 'DIRS': [],
         # version single page
-        'DIRS': [os.path.join(BASE_DIR, 'PATH_TO_INDEX.HTML')], #TODO
+        'DIRS': [os.path.join(BASE_DIR, '../../../../../frontend/views/nginx/index.html')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

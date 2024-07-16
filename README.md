@@ -40,4 +40,3 @@ Total Majeurs = 12;
 ## Objectifs
 	- créer un jeu pong
 	- ce jeu doit être jouable contre un adversaire sur le même clavier ou à distance
-	-
