@@ -1,7 +1,7 @@
-IMAGE_NAME=database_img
-CONTAINER_NAME=database_container
+IMAGE_NAME=dashboard_img
+CONTAINER_NAME=dashboard_container
 
-ball :
+all :
 # Build the Docker image
 	docker build -t $(IMAGE_NAME) .
 # Run the Docker container
