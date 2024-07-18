@@ -1,0 +1,37 @@
+services:
+  pong_game:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.pong
+    # volumes:
+    #   - .:/app
+    container_name: pong_game
+    ports:
+      - "5000:5000"
+    # networks:
+    #   - transcendence
+
+  ai_opponent:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ai
+    # volumes:
+    #   - .:/app
+    container_name: ai_opponent
+    # networks:
+    #   - transcendence
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "4000:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - pong_game
+      - ai_opponent
+    extra_hosts:
+      - "pong_game:172.17.0.1"
+    # networks:
+    #   - transcendence
