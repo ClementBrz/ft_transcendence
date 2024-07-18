@@ -1,8 +1,0 @@
-# Docker NGINX :
-# 	npm install vite
-# 	cd pong_game
-# 	npm install three
-
-# Makefile
-#	cd pong_game
-#	npm run dev
