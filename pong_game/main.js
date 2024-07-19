@@ -636,7 +636,7 @@ function simulateKeyRelease(key) {
 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
 }
 
-import { getPaddleAction } from '../ai_opponent/AI.js';
+import { getPaddleAction } from '../AI.js';
 
 function aiMovePaddle()
 {
@@ -663,7 +663,7 @@ function aiMovePaddle()
 	}
 }
 
-import { GameData } from '../ai_opponent/AI.js';
+import { GameData } from '../AI.js';
 
 let data = new GameData();
 
@@ -704,6 +704,12 @@ export function update_game_data()
 }
 
 /***********************************************************************************/
+/************************** Dashboard django database*******************************/
+/***********************************************************************************/
+
+import { sendGameDataToDjango } from '../sendGameDataToDjango.js';
+
+/***********************************************************************************/
 /********************************** Animation **************************************/
 /***********************************************************************************/
 
@@ -739,7 +745,7 @@ function animate()
 		// ball.position.y = ballSpeedY;
 		roundStarted = true;
 	}
-	if (game)//while no one has won 10 rounds yet
+	if (game) //while no one has won 10 rounds yet
 	{
 		keyHook();
 		if (roundStarted)
@@ -754,6 +760,8 @@ function animate()
 		if (roundStarted)
 			checkGoals();
 	}
+	else //fin de la partie
+		sendGameDataToDjango(); //CARO
 	// Rendre la scène
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);
