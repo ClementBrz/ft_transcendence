@@ -761,7 +761,7 @@ function animate()
 			checkGoals();
 	}
 	else //fin de la partie
-		sendGameDataToDjango(); //CARO
+		sendGameDataToDjango(); //TODO: MARINE
 	// Rendre la scène
 	requestAnimationFrame(animate);
 	renderer.render(scene, camera);

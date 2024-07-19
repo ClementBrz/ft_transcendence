@@ -8,8 +8,8 @@ export function sendGameDataToDjango(winner, scoreLeft, scoreRight) {
 		Insere ici le nom des variables correspondant aux nicknames envoyes par jess
 		pour que je puisse recuperer ces infos dans ma base de donnees de django stp.
 		*/
-		userLeft: //TODO: inserer ici
-		userRight: //TODO: inserer ici
+		userLeft: userLeft,//TODO: inserer ici
+		userRight: userRight,//TODO: inserer ici
 		scoreLeft: scoreLeft,
 		scoreRight: scoreRight
 	};
