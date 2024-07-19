@@ -1,12 +1,7 @@
 from django.db import models
 
-# class Item(models.Model): #HERE
-# 	name = models.CharField(max_length=200)
-# 	created = models.DateTimeField(auto_now_add=True)
-
-
 class Stats(models.Model):
-	username = models.CharField(max_length=200)
+	nickname = models.CharField(max_length=200)
 	#TODO: avatar = img (aller la chercher dans base de donnees jess)
 	nb_of_victories = models.fields.IntegerField()
 	nb_of_defeats = models.fields.IntegerField()
@@ -31,3 +26,10 @@ class Stats(models.Model):
 	#je dois avoir un historique des parties jouees donc je
 	#dois avoir un containeur avec les logins des joueurs et
 #les points de chacun
+
+class GameHistory(models.Model):
+    #ForeignKey to link GameHistory to Stats
+    stats = models.ForeignKey(Stats, related_name='games_history', on_delete=models.CASCADE)
+    opponentNickname = models.CharField(max_length=200)
+    opponentScore = models.IntegerField()
+    myScore = models.IntegerField()
