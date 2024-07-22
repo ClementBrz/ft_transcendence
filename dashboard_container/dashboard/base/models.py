@@ -33,3 +33,4 @@ class GameHistory(models.Model):
     opponentNickname = models.CharField(max_length=200)
     opponentScore = models.IntegerField()
     myScore = models.IntegerField()
+    date = models.DateTimeField()
