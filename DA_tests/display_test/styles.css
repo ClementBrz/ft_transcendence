@@ -1,67 +1,68 @@
 .icon-box {
-    height: 300px;
-    margin: 15px;
-    border: 1px solid #ddd;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    /* background-color: #911b1b */
+	height: 300px;
+	margin: 15px;
+	border: 1px solid #ddd;
+	background-color: #ffffff;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	/* background-color: #911b1b */
+	border-radius: 10%;
 }
 
 .loading-icon {
-    width: 100px;
-    height: 100px;
-    display: block;
-}
-
-.lottie-container {
-    width: 100%;
-    height: 100%;
+	width: 200px;
+	height: 200px;
+	display: block;
 }
 
 .avatar-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
 }
 
 .avatar-box {
-    margin: 10px;
-    cursor: pointer;
+	margin: 10px;
+	cursor: pointer;
 }
 
 .avatar-icon {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    transition: transform 0.3s;
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	transition: transform 0.3s;
 }
 
 .avatar-box:hover .avatar-icon {
-    transform: scale(1.1);
+	transform: scale(1.1);
 }
 
 .badge-icon {
-    width: 150px;
-    height: 150px;
+	width: 150px;
+	height: 150px;
 }
 
 h1 {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
 }
 
 p {
-    font-size: 30px;
-    color: #1ab0bb;
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+	font-size: 30px;
+	color: #000000;
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+body {
+	background-color: #1ab0bb;
 }
