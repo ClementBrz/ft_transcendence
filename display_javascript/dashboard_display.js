@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function()
 {
 	loadDashboardData(); //pour fetch statsData
-	setupEventListeners(); //pour charts etc qui s'affichent au click
+	setupEventListeners(); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
 	loadUserManagementData() //pour avatars
 });
 
@@ -62,41 +62,149 @@ function loadUserManagementData()
 		.catch(error => console.error('Error : fetch userData', error));
 }
 
-function Avatars(userData)
-{
-	/*TODO: for each user, show userData.avatar the same way they used to be shown
-	with random avatars in index.html --> should I uncomment the different 
-	avatar-box divisions in index.html? Because I won't know in advance how many
-	users there are so I would prefere not to rely on index.html*/
+//TODO: remettre cette fonction qd j aurais decide quoi afficher
+// function ChartBarData(statsData)
+// {
+// 	var ctx1 = document.getElementById('modalChart1').getContext('2d');
+//     new Chart(ctx1, {
+//         type: 'bar',
+//         data: {
+//             labels: statsData.map(item => item.label), // Assuming each item has a 'label'
+//             datasets: [{
+//                 label: 'Dataset 1',
+// 				//FIX : ca va pas, j ai pas fait une map
+//                 data: statsData.map(item => item.value), // Assuming each item has a 'value'
+//                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
+//                 borderColor: 'rgba(75, 192, 192, 1)',
+//                 borderWidth: 1
+//             }]
+//         },
+//         options: {
+//             responsive: true,
+//             maintainAspectRatio: false
+//         }
+//     });
+// }
 
-	/*TODO: Afficher que les avatars des users qui ont deja joue avec la personne
-	connectee :
-	
-	while (gameHistoryData)
-		while(userData)
-			if (gameHistoryData.opponentNickname == userData.nickname)
-				show userData.avatar;
-			userData->next;
-		gameHisotryData->next;*/
+function Avatars(userData) {
+	// Ensure only one avatar per user
+	const uniqueUsers = [];
+	const avatarContainer = document.querySelector('.avatar-container');
+	avatarContainer.innerHTML = ''; // Clear existing avatars
 
-	function Avatars(userData) {
-		const avatarContainer = document.querySelector('.avatar-container');
-		avatarContainer.innerHTML = ''; // Clear existing avatars
-	
-		userData.forEach(user => {
+	userData.forEach(user => {
+		if (!uniqueUsers.includes(user.nickname)) {
+			uniqueUsers.push(user.nickname);
+
 			const avatarBox = document.createElement('div');
 			avatarBox.className = 'avatar-box';
 			avatarBox.dataset.toggle = 'tableModal';
-	
+			avatarBox.dataset.nickname = user.nickname; // Add data attribute for nickname
+
 			const avatarImg = document.createElement('img');
-			avatarImg.src = user.avatar; // Assumes 'avatar' is a URL to the user's avatar image
+			avatarImg.src = user.avatar_url; // Use 'avatar_url' provided by the serializer
 			avatarImg.alt = `Avatar of ${user.nickname}`;
 			avatarImg.className = 'avatar-icon';
-	
+
 			avatarBox.appendChild(avatarImg);
 			avatarContainer.appendChild(avatarBox);
-		});
-	}
+
+			avatarBox.addEventListener('click', () => {
+				displayGameHistory(user.nickname, userData); //affiche le tableau d'historique de jeu pour l'avatar clique
+			});
+		}
+	});
+}
+
+
+function Avatars(statsData, userData) {
+	const opponentsList = []; // Ensure only one avatar per user
+	const avatarContainer = document.querySelector('.avatar-container');
+	avatarContainer.innerHTML = ''; // Clear existing avatars
+
+	statsData.gameHistory.forEach(game => {
+		if (!opponentsList.includes(game.opponentNickname)) //if NOT already in list
+			opponentsList.push(game.opponentNickname);
+	})
+
+	userData.forEach(user => {
+		if (opponentsList.includes(user.nickname)) //if current user is inside opponentsList : display avatar
+		{
+			const avatarBox = document.createElement('div');
+			avatarBox.className = 'avatar-box';
+			avatarBox.dataset.toggle = 'tableModal';
+			avatarBox.dataset.nickname = user.nickname;
+
+			const avatarImg = document.createElement('img');
+			avatarImg.src = user.avatar_url;
+			avatarImg.alt = `Avatar of ${user.nickname}`;
+			avatarImg.className = 'avatar-icon';
+
+			avatarBox.appendChild(avatarImg);
+			avatarContainer.appendChild(avatarBox);
+
+			avatarBox.addEventListener('click', () => {
+				displayGameHistory(userData.nickname, user.nickname, userData); //affiche le tableau d'historique de jeu pour l'avatar clique
+			});
+		}
+	});
+}
+
+function displayGameHistory(connectedUser, chosenOpponent, userData)
+{
+	//creation du tableau et ajout des headers avec les params + date
+
+	const tableHeaderRow = document.getElementById('tableHeaderRow');
+	tableHeaderRow.innerHTML = ''; // Clear existing header cells
+
+	const dateHeader = document.createElement('th');
+	dateHeader.textContent = 'Date';
+	tableHeaderRow.appendChild(dateHeader);
+
+	const nickname1Header = document.createElement('th');
+	nickname1Header.textContent = connectedUser; // Current user's nickname
+	tableHeaderRow.appendChild(nickname1Header);
+
+	const nickname2Header = document.createElement('th');
+	nickname2Header.textContent = chosenOpponent; // Opponent user's nickname
+	tableHeaderRow.appendChild(nickname2Header);
+
+	addGameHistory(connectedUser, chosenOpponent, statsData);
+}
+
+function addGameHistory(connectedUser, chosenOpponent, userData)
+{
+	const tableBody = document.getElementById('tableBody');
+	tableBody.innerHTML = ''; // Clear existing rows
+
+	statsData.gameHistory.forEach(game => {
+		if (game.opponentNickname === chosenOpponent) 
+		{
+			// Add date row
+			const dateRow = document.createElement('tr');
+			const dateCell = document.createElement('td');
+			dateCell.textContent = new Date(game.date).toLocaleDateString();
+			dateCell.colSpan = 3;
+			dateRow.appendChild(dateCell);
+			tableBody.appendChild(dateRow);
+
+			// Add score row
+			const scoreRow = document.createElement('tr');
+
+			const nickname1Cell = document.createElement('td');
+			nickname1Cell.textContent = connectedUser;
+			scoreRow.appendChild(nickname1Cell);
+
+			const nickname2Cell = document.createElement('td');
+			nickname2Cell.textContent = game.opponentNickname;
+			scoreRow.appendChild(nickname2Cell);
+
+			const scoresCell = document.createElement('td');
+			scoresCell.textContent = `${game.myScore} - ${game.opponentScore}`;
+			scoreRow.appendChild(scoresCell);
+			tableBody.appendChild(scoreRow);
+		}
+	});
 }
 
 function ChartDoughnutData(statsData)
@@ -108,7 +216,6 @@ function ChartDoughnutData(statsData)
 			labels: ['Wins', 'Losses'],
 			datasets: [{
 				label: 'Games',
-				// data: [20, 10], // Random numbers for wins and losses
 				data: [statsData.nb_of_victories, statsData.nb_of_defeats],
 				backgroundColor: ['#36a2eb', '#ff6384'],
 				hoverBackgroundColor: ['#36a2eb', '#ff6384']
@@ -125,60 +232,6 @@ function ChartDoughnutData(statsData)
 			}
 		}
 	});
-}
-
-function GameHistoryTable(statsData)
-{
-		/*TODO: how do I retrieve the data from the GameHistory class
-		in models.py? Can I do it throught the getData view (since GameHisotry
-		is Linked by foreignKey to the Stats class)? Or should I create another 
-		view specifically to fetch the GameHistory info?
-		*/
-
-		function GameHistoryTable(statsData) {
-			const gameHistoryData = statsData.flatMap(player => player.games_history.map(game => ({
-				date: new Date(game.date).toLocaleDateString(),
-				opponent: game.opponentNickname,
-				myScore: game.myScore,
-				opponentScore: game.opponentScore
-			})));
-		
-			const ctx1 = document.getElementById('modalChart1').getContext('2d');
-			new Chart(ctx1, {
-				type: 'bar',
-				data: {
-					labels: gameHistoryData.map(item => item.date), // Dates as labels
-					datasets: [
-						{
-							label: 'My Score',
-							data: gameHistoryData.map(item => item.myScore), //FIX: map??
-							backgroundColor: 'rgba(75, 192, 192, 0.2)',
-							borderColor: 'rgba(75, 192, 192, 1)',
-							borderWidth: 1
-						},
-						{
-							label: 'Opponent Score',
-							data: gameHistoryData.map(item => item.opponentScore),
-							backgroundColor: 'rgba(255, 99, 132, 0.2)',
-							borderColor: 'rgba(255, 99, 132, 1)',
-							borderWidth: 1
-						}
-					]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					scales: {
-						x: {
-							beginAtZero: true
-						},
-						y: {
-							beginAtZero: true
-						}
-					}
-				}
-			});
-		}
 }
 
 function Badge(statsData) {
