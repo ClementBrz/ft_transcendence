@@ -1,27 +1,27 @@
 document.addEventListener('DOMContentLoaded', function()
 {
-	loadDashboardData();
-	setupEventListeners();
+	loadDashboardData(); //pour fetch statsData
+	setupEventListeners(); //pour charts etc qui s'affichent au click
+	loadUserManagementData() //pour avatars
 });
 
 function setupEventListeners() {
-    // Set up event listeners for the icons
-    document.getElementById('chart_icon').addEventListener('click', function() {
-        $('#chartModal').modal('show');
-    });
+	document.getElementById('chart_icon').addEventListener('click', function() {
+		$('#chartModal').modal('show');
+	});
 
-    document.getElementById('friends_icon').addEventListener('click', function() {
-        $('#avatarModal').modal('show');
-    });
+	document.getElementById('friends_icon').addEventListener('click', function() {
+		$('#avatarModal').modal('show');
+	});
 
-    document.getElementById('trophee_icon').addEventListener('click', function() {
-        $('#badgeModal').modal('show');
-    });
+	document.getElementById('trophee_icon').addEventListener('click', function() {
+		$('#badgeModal').modal('show');
+	});
 }
 
 function loadDashboardData()
 {
-	fetch('/api/getData') //getData() est une fonction dans le dossier /api de mon projet django
+	fetch('/api/getData') //TODO: modifier path. getData() est une fonction dans le dossier /api de mon projet django
 		.then(response =>
 		{
 			if (!response.ok)
@@ -37,11 +37,7 @@ function loadDashboardData()
 			ChartDoughnutData(statsData);
 
 			//friends_icon
-			// AvatarsWindow(statsData); //TODO: voir comment chopper les avatar de la base de donnees de jess
-			//GameHistoryTable(statsData); 
-			/*FIX: statsData ou gameHistoryData 
-			d'une autre fonction getHistoryData que je devrais creer? J ene sais pas
-			encore comment chopper les donnes de la classe GameHistory*/
+			GameHistoryTable(statsData); 
 
 			//trophee_icon
 			Badge(statsData);
@@ -49,31 +45,59 @@ function loadDashboardData()
 		.catch(error => console.error('Error : fetch statsData', error));
 }
 
+function loadUserManagementData()
+{
+	fetch('/api/getData') //TODO adapter a path et nom fonction jess
+		.then(response =>
+		{
+			if (!response.ok)
+				throw new Error('Error : network response');
+			return response.json();
+		})
+		//on met dans statsData toutes les données qu'on a fetch de ma base de données Django
+		.then(userData => {
+			console.log(userData);
+			Avatars(userData);
+		})
+		.catch(error => console.error('Error : fetch userData', error));
+}
 
+function Avatars(userData)
+{
+	/*TODO: for each user, show userData.avatar the same way they used to be shown
+	with random avatars in index.html --> should I uncomment the different 
+	avatar-box divisions in index.html? Because I won't know in advance how many
+	users there are so I would prefere not to rely on index.html*/
 
-//TODO: remettre cette fonction qd j aurais decide quoi afficher
-// function ChartBarData(statsData)
-// {
-// 	var ctx1 = document.getElementById('modalChart1').getContext('2d');
-//     new Chart(ctx1, {
-//         type: 'bar',
-//         data: {
-//             labels: statsData.map(item => item.label), // Assuming each item has a 'label'
-//             datasets: [{
-//                 label: 'Dataset 1',
-// 				//FIX : ca va pas, j ai pas fait une map
-//                 data: statsData.map(item => item.value), // Assuming each item has a 'value'
-//                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
-//                 borderColor: 'rgba(75, 192, 192, 1)',
-//                 borderWidth: 1
-//             }]
-//         },
-//         options: {
-//             responsive: true,
-//             maintainAspectRatio: false
-//         }
-//     });
-// }
+	/*TODO: Afficher que les avatars des users qui ont deja joue avec la personne
+	connectee :
+	
+	while (gameHistoryData)
+		while(userData)
+			if (gameHistoryData.opponentNickname == userData.nickname)
+				show userData.avatar;
+			userData->next;
+		gameHisotryData->next;*/
+
+	function Avatars(userData) {
+		const avatarContainer = document.querySelector('.avatar-container');
+		avatarContainer.innerHTML = ''; // Clear existing avatars
+	
+		userData.forEach(user => {
+			const avatarBox = document.createElement('div');
+			avatarBox.className = 'avatar-box';
+			avatarBox.dataset.toggle = 'tableModal';
+	
+			const avatarImg = document.createElement('img');
+			avatarImg.src = user.avatar; // Assumes 'avatar' is a URL to the user's avatar image
+			avatarImg.alt = `Avatar of ${user.nickname}`;
+			avatarImg.className = 'avatar-icon';
+	
+			avatarBox.appendChild(avatarImg);
+			avatarContainer.appendChild(avatarBox);
+		});
+	}
+}
 
 function ChartDoughnutData(statsData)
 {
@@ -103,10 +127,59 @@ function ChartDoughnutData(statsData)
 	});
 }
 
-// function GameHistoryTable(statsData)
-// {
+function GameHistoryTable(statsData)
+{
+		/*TODO: how do I retrieve the data from the GameHistory class
+		in models.py? Can I do it throught the getData view (since GameHisotry
+		is Linked by foreignKey to the Stats class)? Or should I create another 
+		view specifically to fetch the GameHistory info?
+		*/
 
-// }
+		function GameHistoryTable(statsData) {
+			const gameHistoryData = statsData.flatMap(player => player.games_history.map(game => ({
+				date: new Date(game.date).toLocaleDateString(),
+				opponent: game.opponentNickname,
+				myScore: game.myScore,
+				opponentScore: game.opponentScore
+			})));
+		
+			const ctx1 = document.getElementById('modalChart1').getContext('2d');
+			new Chart(ctx1, {
+				type: 'bar',
+				data: {
+					labels: gameHistoryData.map(item => item.date), // Dates as labels
+					datasets: [
+						{
+							label: 'My Score',
+							data: gameHistoryData.map(item => item.myScore), //FIX: map??
+							backgroundColor: 'rgba(75, 192, 192, 0.2)',
+							borderColor: 'rgba(75, 192, 192, 1)',
+							borderWidth: 1
+						},
+						{
+							label: 'Opponent Score',
+							data: gameHistoryData.map(item => item.opponentScore),
+							backgroundColor: 'rgba(255, 99, 132, 0.2)',
+							borderColor: 'rgba(255, 99, 132, 1)',
+							borderWidth: 1
+						}
+					]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					scales: {
+						x: {
+							beginAtZero: true
+						},
+						y: {
+							beginAtZero: true
+						}
+					}
+				}
+			});
+		}
+}
 
 function Badge(statsData) {
 	document.getElementById('trophee_icon').addEventListener('click', function() {
@@ -146,71 +219,3 @@ function Badge(statsData) {
 		$('#badgeModal').modal('show');
 	});
 }
-
-/* // Show the modal and render the charts when the first box is clicked
-document.getElementById('chart_icon').addEventListener('click', function() {
-	$('#chartModal').modal('show');
-
-	// Add a delay to ensure the modal is fully displayed before rendering the charts
-	setTimeout(function() {
-		var ctx1 = document.getElementById('modalChart1').getContext('2d');
-		new Chart(ctx1, {
-			type: 'bar',
-			data: {
-				labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-				datasets: [{
-					label: 'Dataset 1',
-					data: [12, 19, 3, 5, 2, 3], //changer par statsData
-					backgroundColor: 'rgba(75, 192, 192, 0.2)',
-					borderColor: 'rgba(75, 192, 192, 1)',
-					borderWidth: 1
-				}]
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false
-			}
-		});
-
-		var ctx2 = document.getElementById('modalChart2').getContext('2d');
-		new Chart(ctx2, {
-			type: 'doughnut',
-			data: {
-				labels: ['Wins', 'Losses'],
-				datasets: [{
-					label: 'Games',
-					data: [20, 10], // Random numbers for wins and losses
-					backgroundColor: ['#36a2eb', '#ff6384'],
-					hoverBackgroundColor: ['#36a2eb', '#ff6384']
-				}]
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						display: true,
-						position: 'bottom'
-					}
-				}
-			}
-		});
-	}, 500); // Adjust the delay as necessary
-});
-
-// Show the avatar modal when the second box is clicked
-document.getElementById('friends_icon').addEventListener('click', function() {
-	$('#avatarModal').modal('show');
-});
-
-// Show the table modal when an avatar is clicked
-document.querySelectorAll('.avatar-box').forEach(function(avatarBox) {
-	avatarBox.addEventListener('click', function() {
-		$('#tableModal').modal('show');
-	});
-});
-
-// Show the badge modal when the third box is clicked
-document.getElementById('trophee_icon').addEventListener('click', function() {
-	$('#badgeModal').modal('show');
-}); */

@@ -25,7 +25,7 @@ class Stats(models.Model):
 	#equivalent de std::map en c++ pq le sujet specifie que
 	#je dois avoir un historique des parties jouees donc je
 	#dois avoir un containeur avec les logins des joueurs et
-#les points de chacun
+	#les points de chacun
 
 class GameHistory(models.Model):
     #ForeignKey to link GameHistory to Stats
