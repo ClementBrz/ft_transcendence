@@ -21,7 +21,7 @@ RUN chmod -R 777 /app
 RUN ls -la > /app/ls.txt && cat /app/ls.txt
 
 #voir avec les autres quel port
-EXPOSE 8000
+EXPOSE 8200
 
 # Define environment variable
 ENV PYTHONUNBUFFERED=1
