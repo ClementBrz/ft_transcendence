@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - "transcendance"
+    depends_on:
+      - profile
+      - dashboard
+      - database
+
+  database:
+    container_name: PostgreSQL
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./initiation_files/init.sql:/docker-entrypoint-initdb.d/initiation_files/init.sql
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+
+  profile:
+    container_name: User
+    build:
+      context: .
+      dockerfile: user_management_container/Dockerfile
+    command: >
+      sh -c "
+      cd /app &&
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8200"
+    ports:
+      - "8200:8200"
+    depends_on:
+      - database
+    environment:
+      - DATABASE_HOST=database
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=pong_database
+      - DATABASE_USER=pong_user
+      - DATABASE_PASSWORD=pong_password
+    networks:
+      - "transcendance"
+
+  dashboard:
+    container_name: Dashboard
+    build:
+      context: .
+      dockerfile: dashboard_container/Dockerfile
+    command: >
+      sh -c "
+      cd /app &&
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8100"
+    ports:
+      - "8100:8100"
+    depends_on:
+      - profile
+      - database
+    networks:
+      - "transcendance"
+
+volumes:
+  postgres_data:
+
+networks:
+  transcendance:
+    driver: bridge
