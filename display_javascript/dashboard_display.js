@@ -87,7 +87,8 @@ function loadUserManagementData()
 // }
 
 
-function Avatars(statsData, userData) {
+function Avatars(statsData, userData)
+{
 	const opponentsList = []; // Ensure only one avatar per user
 	const avatarContainer = document.querySelector('.avatar-container');
 	avatarContainer.innerHTML = ''; // Clear existing avatars
@@ -107,7 +108,7 @@ function Avatars(statsData, userData) {
 
 			const avatarImg = document.createElement('img');
 			avatarImg.src = user.avatar_url;
-			avatarImg.alt = `Avatar of ${user.nickname}`;
+			avatarImg.alt = `Avatar of ${user.nickname}`; //TODO: faire en sorte que le nickname apparaisse juste en passant la souris sur l'avatar?
 			avatarImg.className = 'avatar-icon';
 
 			avatarBox.appendChild(avatarImg);
