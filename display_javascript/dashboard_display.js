@@ -86,36 +86,6 @@ function loadUserManagementData()
 //     });
 // }
 
-function Avatars(userData) {
-	// Ensure only one avatar per user
-	const uniqueUsers = [];
-	const avatarContainer = document.querySelector('.avatar-container');
-	avatarContainer.innerHTML = ''; // Clear existing avatars
-
-	userData.forEach(user => {
-		if (!uniqueUsers.includes(user.nickname)) {
-			uniqueUsers.push(user.nickname);
-
-			const avatarBox = document.createElement('div');
-			avatarBox.className = 'avatar-box';
-			avatarBox.dataset.toggle = 'tableModal';
-			avatarBox.dataset.nickname = user.nickname; // Add data attribute for nickname
-
-			const avatarImg = document.createElement('img');
-			avatarImg.src = user.avatar_url; // Use 'avatar_url' provided by the serializer
-			avatarImg.alt = `Avatar of ${user.nickname}`;
-			avatarImg.className = 'avatar-icon';
-
-			avatarBox.appendChild(avatarImg);
-			avatarContainer.appendChild(avatarBox);
-
-			avatarBox.addEventListener('click', () => {
-				displayGameHistory(user.nickname, userData); //affiche le tableau d'historique de jeu pour l'avatar clique
-			});
-		}
-	});
-}
-
 
 function Avatars(statsData, userData) {
 	const opponentsList = []; // Ensure only one avatar per user
