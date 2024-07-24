@@ -1,6 +1,3 @@
-
-// Check ou la balle touche le paddle comme le vrai pong
-
 /***********************************************\
  -				GAME CONFIG					-
 \***********************************************/
@@ -147,6 +144,41 @@ function moveBall()
 	}
 }
 
+function checkBallPaddleCollision() {
+    // Check collision with Player 1's paddle
+    if (ball.x - ball.radius < player1.x + player1.width && ball.x + ball.radius > player1.x && ball.y + ball.radius > player1.y && ball.y - ball.radius < player1.y + player1.height) {
+        // Calculate the point of collision from the center of the paddle
+        let collidePointP1 = (ball.y - (player1.y + player1.height / 2));
+        // Normalize the collision point
+        collidePointP1 = collidePointP1 / (player1.height / 2);
+        // Calculate the angle of deflection
+        let angleRadP1 = collidePointP1 * Math.PI/4;
+        ball.dx = ball.speed * Math.cos(angleRadP1);
+        ball.dy = ball.speed * Math.sin(angleRadP1);
+        // Ensure the ball moves to the right
+        if (ball.dx < 0) ball.dx = -ball.dx;
+        // Increase the ball's speed to increase difficulty
+        ball.speed += 0.1;
+    }
+
+    // Check collision with Player 2's paddle
+    if (ball.x + ball.radius > player2.x && ball.x - ball.radius < player2.x + player2.width && ball.y + ball.radius > player2.y && ball.y - ball.radius < player2.y + player2.height) {
+        // Calculate the point of collision from the center of the paddle
+        let collidePointP2 = (ball.y - (player2.y + player2.height / 2));
+        // Normalize the collision point
+        collidePointP2 = collidePointP2 / (player2.height / 2);
+        // Calculate the angle of deflection
+        let angleRadP2 = collidePointP2 * Math.PI/4;
+        ball.dx = -ball.speed * Math.cos(angleRadP2);
+        ball.dy = ball.speed * Math.sin(angleRadP2);
+        // Ensure the ball moves to the left
+        if (ball.dx > 0) ball.dx = -ball.dx;
+        // Increase the ball's speed to increase difficulty
+        ball.speed += 0.1;
+    }
+}
+
+
 /***			Resetting ball to center	   ***/
 function resetBall()
 {
@@ -176,10 +208,14 @@ function gameLoop()
 	drawBall();
 	drawScore();
 
+
+	checkBallPaddleCollision();
+
 	const winner = checkWinner();
 	if (winner)
 	{
 		drawWinMessage(winner);
+		// send data to caro a son microservice
 		game_done = true;
 	}
 	else
@@ -199,10 +235,12 @@ function keyDownHandler(e)
 {
 	switch (e.key) {
 		case "ArrowUp":
-			if (AI_present == false) player2.dy = -paddleSpeed;
+			if (AI_present == false)
+				player2.dy = -paddleSpeed;
 			break;
 		case "ArrowDown":
-			if (AI_present == false) player2.dy = paddleSpeed;
+			if (AI_present == false)
+				player2.dy = paddleSpeed;
 			break;
 		case "w":
 			player1.dy = -paddleSpeed;
