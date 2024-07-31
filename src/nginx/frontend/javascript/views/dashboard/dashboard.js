@@ -227,16 +227,13 @@ function Badge(statsData) {
 		let badgeSrc = '';
 		let message = '';
 
-		// Determine badge image source
+		// Determine badge image
 		if (statsData.badge == 1) {
 			badgeSrc = 'animated_icons/gold.gif';
-			// message = 'You have earned a Gold Badge!';
 		} else if (statsData.badge == 2) {
 			badgeSrc = 'animated_icons/silver.gif';
-			// message = 'You have earned a Silver Badge!';
 		} else if (statsData.badge == 3) {
 			badgeSrc = 'animated_icons/bronze.gif';
-			// message = 'You have earned a Bronze Badge!';
 		}
 
 		// Determine ranking position message

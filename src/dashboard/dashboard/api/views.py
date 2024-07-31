@@ -22,7 +22,6 @@ def getData(request):
 
 @api_view(['POST'])
 def addStats(request):
-	serializer = statsSerializer(data=request.data) #TEST
 	leftNick = request.data.get('leftNick')
 	rightNick = request.data.get('rightNick')
 	leftScore = request.data.get('leftScore')
