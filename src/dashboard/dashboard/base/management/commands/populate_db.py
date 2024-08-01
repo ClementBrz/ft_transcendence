@@ -11,7 +11,7 @@ nb_of_victories = random.randint(0, 100)
 fake = Faker()
 
 class Command(BaseCommand):
-    help = 'Populates the database with random user and stats data'
+    help = 'Populates the database with random user'
 
     def handle(self, *args, **kwargs):
         for _ in range(10):

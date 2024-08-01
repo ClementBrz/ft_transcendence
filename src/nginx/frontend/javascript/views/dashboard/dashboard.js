@@ -1,27 +1,28 @@
-export function renderDashboard()
-{
-	return `
-		<div id="dashboard">
-			<h1>Welcome to the Dashboard</h1>
-			<div id="chart_icon">Chart Icon</div>
-			<div id="friends_icon">Friends Icon</div>
-			<div id="trophee_icon">Trophee Icon</div>
+// dashboard.js
 
-			<div id="chartModal" class="modal"></div>
-			<div id="avatarModal" class="modal"></div>
-			<div id="badgeModal" class="modal">
-				<div class="modal-body">
-					<img class="badge-icon" src="" alt="Badge">
-					<p></p>
-				</div>
-			</div>
-			<div class="avatar-container"></div>
-			<table>
-				<thead id="tableHeaderRow"></thead>
-				<tbody id="tableBody"></tbody>
-			</table>
-		</div>
-	`;
+export function renderDashboard() {
+    return `
+        <div id="dashboard">
+            <h1>Welcome to the Dashboard</h1>
+            <div id="chart_icon">Chart Icon</div>
+            <div id="friends_icon">Friends Icon</div>
+            <div id="trophee_icon">Trophee Icon</div>
+
+            <div id="chartModal" class="modal"></div>
+            <div id="avatarModal" class="modal"></div>
+            <div id="badgeModal" class="modal">
+                <div class="modal-body">
+                    <img class="badge-icon" src="" alt="Badge">
+                    <p></p>
+                </div>
+            </div>
+            <div class="avatar-container"></div>
+            <table>
+                <thead id="tableHeaderRow"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    `;
 }
 
 export function initializeDashboard()
@@ -41,9 +42,9 @@ function setupEventListeners()
 		$('#avatarModal').modal('show');
 	});
 
-	document.getElementById('trophee_icon').addEventListener('click', function() {
-		$('#badgeModal').modal('show');
-	});
+    document.getElementById('trophee_icon').addEventListener('click', function() {
+        $('#badgeModal').modal('show');
+    });
 }
 
 function loadDashboardData() {

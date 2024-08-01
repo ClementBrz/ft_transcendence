@@ -40,7 +40,21 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'base',
+    'channels',
 ]
+
+# Pour gérer les channels > pour avoir le statut de connexion en temps réel
+ASGI_APPLICATION = 'user_management_database.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

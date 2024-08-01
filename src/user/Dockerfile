@@ -14,6 +14,9 @@ COPY initiation_files/requirements.txt /app/initiation_files/requirements.txt
 #Install django and its dependencies
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install -r /app/initiation_files/requirements.txt
+RUN pip install channels_redis
+RUN pip install channels
+RUN pip install faker
 
 # Copy the rest of the application code
 COPY user/user_management/ /app
