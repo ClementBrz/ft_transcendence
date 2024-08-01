@@ -62,18 +62,30 @@ function loadUserData() {
     console.log("API call to fetch user data");
     fetch('/api/profile/')
         .then(response => {
-            console.log("Check si la reponse is okay");
+            console.log("Received response:", response);
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                return response.text().then(text => { // Attempt to read the response body
+                    throw new Error(`Network response was not ok: ${response.statusText}, Response: ${text}`);
+                });
             }
-            console.log("NTM");
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                return response.text().then(text => {
+                    throw new TypeError(`Expected JSON response but received something else: ${text}`);
+                });
+            }
             return response.json();
         })
         .then(userData => {
             displayUserData(userData);
         })
-        .catch(error => console.error('Error fetching user data:', error));
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+            alert('There was an error fetching the user data. Please try again later.');
+        });
 }
+
+
 
 
 function displayUserData(userData) {
@@ -107,7 +119,7 @@ function displayUserData(userData) {
 
 
 function loadFriendsList() {
-    fetch('/api/friends/')
+    fetch('/api/friends')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');

@@ -8,29 +8,28 @@ import os
 
 
 class CustomUser(AbstractUser):
-    username = models.CharField(blank=False, null=False, max_length=12, unique=True)
-    display_name = models.CharField(max_length=12)
-    password = models.CharField(blank=False, null=False, max_length=50)
-    email = models.EmailField(blank=False, null=False, unique=True)
-    avatar = models.ImageField(blank=True, upload_to='avatars/')
-    is_online = models.BooleanField(default=True)
-    friends = models.ManyToManyField("CustomUser", blank=True)
-    # is_2fa = models.BooleanField(default=False)
+	username = models.CharField(blank=False, null=False, max_length=12, unique=True)
+	display_name = models.CharField(max_length=12)
+	password = models.CharField(blank=False, null=False, max_length=50)
+	email = models.EmailField(blank=False, null=False, unique=True)
+	avatar = models.ImageField(blank=True, upload_to='avatars/')
+	is_online = models.BooleanField(default=True)
+	friends = models.ManyToManyField("CustomUser", blank=True)
 	
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='customuser_set',
-        blank=True,
-        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-        verbose_name='groups'
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='customuser_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions'
-    )
+	groups = models.ManyToManyField(
+		'auth.Group',
+		related_name='customuser_set',
+		blank=True,
+		help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+		verbose_name='groups'
+	)
+	user_permissions = models.ManyToManyField(
+		'auth.Permission',
+		related_name='customuser_set',
+		blank=True,
+		help_text='Specific permissions for this user.',
+		verbose_name='user permissions'
+	)
 
 
 
