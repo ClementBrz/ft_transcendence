@@ -8,7 +8,10 @@ export function renderDashboard() {
 			<div id="friends_icon">Friends Icon</div>
 			<div id="trophee_icon">Trophee Icon</div>
 
-			<div id="chartModal" class="modal"></div>
+			<div id="chartModal" class="modal">
+				<canvas id="chartModal" width="400" height="400"></canvas>
+			</div>
+
 			<div id="avatarModal" class="modal"></div>
 			<div id="badgeModal" class="modal">
 				<div class="modal-body">
@@ -21,32 +24,97 @@ export function renderDashboard() {
 				<thead id="tableHeaderRow"></thead>
 				<tbody id="tableBody"></tbody>
 			</table>
+
+			<div id="tableModal" class="modal">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Game History</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Player 1</th>
+										<th>Player 2</th>
+										<th>Score</th>
+									</tr>
+								</thead>
+								<tbody id="tableBody">
+									<!-- Rows will be populated dynamically -->
+								</tbody>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 		</div>
 	`;
 }
 
 export function initializeDashboard() {
+	console.log("Initializing dashboard");
 	loadDashboardData(); //pour fetch statsData
-	setupEventListeners(); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
+	console.log("After loadDashboardData");
+	// setupEventListeners(); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
+	// console.log("After setupEventListeners");
 	loadUserManagementData(); //pour avatars
+	console.log("After loadUserManagementData");
+
+	//TEST
+	document.addEventListener('DOMContentLoaded', (event) => {
+		setupEventListeners();
+	});
+	console.log("After setupEventListeners");
+	//TEST FIN
 }
 
-function setupEventListeners() {
-	document.getElementById('chart_icon').addEventListener('click', function() {
-		$('#chartModal').modal('show');
-	});
+function setupEventListeners()
+{
+	const chartIcon = document.getElementById('chart_icon');
+	const friendsIcon = document.getElementById('friends_icon');
+	const tropheeIcon = document.getElementById('trophee_icon');
 
-	document.getElementById('friends_icon').addEventListener('click', function() {
-		$('#avatarModal').modal('show');
-	});
+	if (chartIcon)
+	{
+		chartIcon.addEventListener('click', function() {
+			$('#chartModal').modal('show');
+		});
+	}
+	else
+		console.error('Canvas element with id "chartModal" not found or context is null.');
+	
+	if (friendsIcon)
+	{
+		friendsIcon.addEventListener('click', function() {
+			$('#avatarModal').modal('show');
+		});
+	}
+	else
+		console.error('Canvas element with id "avatarModal" not found or context is null.');
 
-	document.getElementById('trophee_icon').addEventListener('click', function() {
-		$('#badgeModal').modal('show');
-	});
+	if (tropheeIcon)
+	{
+		tropheeIcon.addEventListener('click', function() {
+			$('#badgeModal').modal('show');
+		});
+	}
+	else
+		console.error('Canvas element with id "badgeModal" not found or context is null.');
+
 }
 
-function loadDashboardData() {
-	fetch('/dashboard/api/getData')
+function loadDashboardData()
+{
+	fetch('/api/dashboard')
 		.then(response => {
 			if (!response.ok)
 				throw new Error('Error : network response');
@@ -56,17 +124,20 @@ function loadDashboardData() {
 			console.log("Received dashboard data : ", statsData);
 			//chart_icon
 			// ChartBarData(statsData);
-			ChartDoughnutData(statsData);
+			// ChartDoughnutData(statsData); //FIX
 			//friends_icon
 			// GameHistoryTable(statsData);
 			//trophee_icon
 			Badge(statsData);
 		})
-		.catch(error => console.error('Error : fetch statsData', error));
+		.catch(error => {
+			console.error('Error: fetch statsData', error);
+		});
 }
 
-function loadUserManagementData() {
-	fetch('/api/getData') //TODO adapter a path et nom fonction jess
+function loadUserManagementData()
+{
+	fetch('/api/userData') //TODO adapter a path et nom fonction jess
 		.then(response => {
 			if (!response.ok)
 				throw new Error('Error : network response');
@@ -197,7 +268,7 @@ function addGameHistory(connectedUser, chosenOpponent, userData)
 
 function ChartDoughnutData(statsData)
 {
-	var ctx2 = document.getElementById('modalChart2').getContext('2d');
+	var ctx2 = document.getElementById('chartModal').getContext('2d');
 	new Chart(ctx2, {
 		type: 'doughnut',
 		data: {
@@ -257,3 +328,6 @@ function Badge(statsData) {
 		$('#badgeModal').modal('show');
 	});
 }
+
+renderDashboard();
+initializeDashboard();

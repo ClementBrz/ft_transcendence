@@ -13,4 +13,7 @@ re : clean all
 web : all
 	xdg-open http://localhost:8080
 
-.PHONY: all clean re web
+logs :
+	docker logs Dashboard
+
+.PHONY: all clean re web logs
