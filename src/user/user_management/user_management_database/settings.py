@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api',
-    'channels',
+    'friends',
 ]
 
 # Pour gérer les channels > pour avoir le statut de connexion en temps réel

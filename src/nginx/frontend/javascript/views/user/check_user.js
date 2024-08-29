@@ -1,5 +1,21 @@
+export default function renderCheckUser() {
+	return `
+	<div class="container">
+		<form id="loginForm">
+			<div class="form-group">
+				<label for="identifier">Username/E-mail:</label>
+				<input type="text" class="form-control" id="identifier" placeholder="Enter username or email"
+					name="identifier">
+			</div>
+			<button type="button" class="btn btn-primary">Submit</button>
+			<div id="loginError" class="text-danger"></div>
+		</form>
+	</div>
+	`;
+}
 
-document.addEventListener('DOMContentLoaded', function () {
+export function checkUserPage() {
+	console.log('Hellooooo');
 	document.querySelector('button[type="button"]').addEventListener('click', function () {
 		let identifier = getIdentifier();
 		console.log('Identifier:', identifier.length);
@@ -13,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 		// createNewUser();
 	});
-});
+};
 
 function getIdentifier() {
 	return document.getElementById('identifier').value;
@@ -60,7 +76,14 @@ function lookForExisitingUser(identifier, id_type) {
 }
 
 function lookForExisitingEmail(identifier) {
-	fetch('/api/users/check-email/', { redirect: 'follow' })
+	fetch('/api/users/check-email/', {
+		redirect: 'follow',
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(identifier),
+	})
 		.then(response => response.json())
 		.then(data => {
 			if (data.exists) {
@@ -74,7 +97,14 @@ function lookForExisitingEmail(identifier) {
 }
 
 function lookForExisitingUsername(identifier) {
-	fetch('/api/users/check-username/', { redirect: 'follow' })
+	fetch('/api/users/check-username/', {
+		redirect: 'follow',
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(identifier),
+	})
 		.then(response => response.json())
 		.then(data => {
 			if (data.exists) {

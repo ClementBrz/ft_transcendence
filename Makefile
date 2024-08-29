@@ -16,6 +16,6 @@ fclean : clean
 	cd src && docker volume prune -af
 	@echo "$(GREEN)\n🛁✨ All containers, networks, volumes and images have been removed ✨🛁\n$(NC)"
 
-re : clean all
+re : fclean all
 
 .PHONY: all clean fclean re

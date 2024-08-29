@@ -9,6 +9,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command: >
+      postgres
     networks:
       - transcendance
     ports:
@@ -42,6 +44,7 @@ services:
     user: root
     volumes:
       - .profile:/var/lib/postgresql/
+      - user:/app/
     build:
       context: .
       dockerfile: user/Dockerfile
@@ -51,7 +54,7 @@ services:
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8200"
+      gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
     expose:
       - "8080:8080"
       - "5432"
@@ -78,7 +81,7 @@ services:
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8100"
+      gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
     expose:
       - "8080:8080"
       - "5432"
@@ -90,6 +93,7 @@ services:
       - database
     env_file:
       - .env
+
 networks:
   transcendance:
     driver: bridge
@@ -97,9 +101,17 @@ networks:
 volumes:
   postgres_data:
     driver: local
+
   frontend:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: './nginx/frontend/'
+
+  user:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './user/user_management/'

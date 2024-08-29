@@ -7,6 +7,7 @@ import renderError404 from "./views/error_404/error_404.js";
 import renderHome from "./views/home/home.js";
 import renderTemplate from "./views/template/template.js";
 import { renderDashboard, initializeDashboard } from "./views/dashboard/dashboard.js";
+import renderCheckUser, { checkUserPage } from "./views/user/check_user.js";
 
 //	Home buttons	\\
 import { renderTheTeam } from "./views/the_team/the_team.js";
@@ -16,6 +17,8 @@ import renderProfile, { startProfile } from "./views/user/profile.js";
 //		Footer		\\
 import renderPrivacyPolicy from "./views/privacy_policy/privacy_policy.js";
 import renderTermsOfService from "./views/terms_of_service/terms_of_service.js";
+
+
 
 /***			Define Routes				***/
 const routes =
@@ -62,6 +65,14 @@ const routes =
 		render: renderPong,
 		init: initializePong
 	},
+	'/login':
+	{
+		title: "Login Page",
+		render: () => {
+			document.getElementById('app').innerHTML = renderCheckUser();
+			checkUserPage();
+		}
+	},
 	'/profile':
 	{
 		title: "My Profile",
@@ -75,10 +86,9 @@ const routes =
 };
 
 /***			Router Function				***/
-function router()
-{
+function router() {
 	let path = window.location.pathname || '/home';
-		
+
 	// Normalize path to avoid trailing slashes causing issues
 	if (path.endsWith('/'))
 		path = path.slice(0, -1);
@@ -88,36 +98,30 @@ function router()
 	console.log('Current path:', path);
 	console.log('Route:', route);
 
-	if (route)
-	{
+	if (route) {
 		document.title = route.title;
 		const renderedContent = route.render();
 
-		if (typeof renderedContent === 'string')
-		{
+		if (typeof renderedContent === 'string') {
 			document.getElementById('app').innerHTML = renderedContent;
 		}
-		else if (renderedContent instanceof HTMLElement)
-		{
+		else if (renderedContent instanceof HTMLElement) {
 			document.getElementById('app').innerHTML = '';
 			document.getElementById('app').appendChild(renderedContent);
 		}
-		if (route.init)
-		{
+		if (route.init) {
 			console.log('Initializing route:', path);
 			route.init();
 		}
 	}
-	else
-	{
+	else {
 		document.title = "Page not Found";
 		document.getElementById('app').innerHTML = renderError404();
 	}
 }
 
 /***		Navigation Function				***/
-function navigateTo(path)
-{
+function navigateTo(path) {
 	history.pushState(null, "", path);
 	router();
 }
@@ -125,13 +129,10 @@ function navigateTo(path)
 window.navigateTo = navigateTo;
 
 /***		Enabling Client-side Routing	***/
-document.addEventListener("DOMContentLoaded", () =>
-{
-	document.body.addEventListener("click", (e) =>
-	{
+document.addEventListener("DOMContentLoaded", () => {
+	document.body.addEventListener("click", (e) => {
 		// Ensure the link is of type <a>
-		if (e.target.matches("a[data-link]"))
-		{
+		if (e.target.matches("a[data-link]")) {
 			e.preventDefault();
 			const href = e.target.getAttribute('href');
 			navigateTo(href);

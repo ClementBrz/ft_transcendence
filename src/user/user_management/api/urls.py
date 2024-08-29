@@ -8,4 +8,5 @@ urlpatterns = [
 	# path('', CustomUserAPIView.as_view()),
 	path('check-email/', views.check_existing_email, name='check-email'),
 	path('check-username/', views.check_existing_username, name='check-username'),
+	path('register/', views.addUser, name='register'),
 ]
