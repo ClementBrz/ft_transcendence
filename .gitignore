@@ -1,5 +1,0 @@
-__pycache__/
-*.pyc
-.DS_Store
-src/prometheus/data
-node_modules./src /prometheus/data/

@@ -24,28 +24,6 @@ fclean : clean
 
 re : fclean all
 
-#######		DOCKER CONTAINERS		#######
-
-logs:
-	cd src && docker-compose logs -f
-
-logs-nginx:
-	cd src && docker-compose logs -f nginx
-
-logs-profile:
-	cd src && docker-compose logs -f profile
-
-logs-dashboard:
-	cd src && docker-compose logs -f dashboard
-
-logs-database:
-	cd src && docker-compose logs -f database
-
-logs-userViews:
-	docker logs User
-
-logs-dashboardViews:
-	docker logs Dashboard
 
 #######		DJANGO		#######
 
@@ -85,4 +63,4 @@ clear_db:
 	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_user_db"
 
 
-.PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard check_allFriendRequests check_allFriends
+.PHONY: all clean fclean re check_allGameHistory check_userGamehistory check_allUsers fill_db clear_db makemigrations_dashboard check_allFriendRequests check_allFriends
