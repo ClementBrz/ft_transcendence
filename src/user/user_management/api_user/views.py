@@ -532,7 +532,7 @@ def get2FAStatus(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
-		return JsonResponse({user.is2fa}, status=status.HTTP_200_OK)
+		return JsonResponse({'is2fa': user.is2fa}, status=status.HTTP_200_OK)
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -253,20 +253,25 @@ export function renderProfile()
 		twoFactorAuthCheckbox.setAttribute('type', 'checkbox');
 		twoFactorAuthCheckbox.setAttribute('id', 'gdpr-acceptance');
 		twoFactorAuthCheckbox.classList.add('form-check-input');
+		getUser2FAStatus()
+			.then (is2fa =>{
+				twoFactorAuthCheckbox.checked = is2fa;
+			})
+			.catch (error => 
+			{
+				console.error('error:', error);	
+			})
 
 		twoFactorAuthContainer.appendChild(twoFactorAuthLabel);
 		twoFactorAuthContainer.appendChild(twoFactorAuthCheckbox);
 
-		document.addEventListener('DOMContentLoaded', async () => {
+		twoFactorAuthCheckbox.addEventListener('change', async() => {
 			const	is2fa = await getUser2FAStatus();
-			if (is2fa !== null) {
-				twoFactorAuthCheckbox.checked = is2fa;
-			}
-		});
-
-		twoFactorAuthCheckbox.addEventListener('change', () => {
-			const	is2fa = twoFactorAuthCheckbox.checked;
-			updateUser2FAStatus(is2fa);
+			
+			if (is2fa == true)
+				await updateUser2FAStatus(false);
+			else
+				await updateUser2FAStatus(true);
 		});
 
 		/************** ANONYMIZE DATA **************/
@@ -616,7 +621,7 @@ async function saveProfileChanges(userData_edit)
 	try
 	{
 
-		const	response = await apiRequest('/api/users/updateProfile/',
+		await apiRequest('/api/users/updateProfile/',
 		{
 			method: 'PUT',
 			headers: {  
@@ -691,7 +696,7 @@ async function updateUserAnonymousStatus()
 {
 	try
 	{
-		const	response = await apiRequest('/api/users/updateAnonymousStatus/',
+		await apiRequest('/api/users/updateAnonymousStatus/',
 		{
 			method: 'PUT',
 			headers:
@@ -716,7 +721,7 @@ async function anonymizeUserData()
 {
     try
     {
-        const response = await apiRequest('/api/users/anonymizeUserData/',
+        await apiRequest('/api/users/anonymizeUserData/',
         {
             method: 'PUT',
             headers:
@@ -794,18 +799,18 @@ async function updateUser2FAStatus(is2fa)
 {
 	try
 	{
-		const	response = await apiRequest('/api/users/update2FAStatus/',
+		await apiRequest('/api/users/update2FAStatus/',
 		{
 			method: 'PUT',
 			headers:
 			{
-				'Authorization': `Bearer ${localStorage.getItem('token')}`,
+				// 'Authorization': `Bearer ${localStorage.getItem('token')}`,
 				'X-CSRFToken': getCookie('csrftoken'),
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({ is2fa }),
 		});
-
+		console.log('2fa envoye a update = ', is2fa); 
 		console.log('2FA status updated successfully.');
 
 	}

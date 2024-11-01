@@ -1,0 +1,116 @@
+diff --git a/src/frontend/javascript/views/user/profile.js b/src/frontend/javascript/views/user/profile.js
+index fe55be17..2a29de51 100644
+--- a/src/frontend/javascript/views/user/profile.js
++++ b/src/frontend/javascript/views/user/profile.js
+@@ -253,20 +253,25 @@ export function renderProfile()
+ 		twoFactorAuthCheckbox.setAttribute('type', 'checkbox');
+ 		twoFactorAuthCheckbox.setAttribute('id', 'gdpr-acceptance');
+ 		twoFactorAuthCheckbox.classList.add('form-check-input');
++		getUser2FAStatus()
++			.then (is2fa =>{
++				twoFactorAuthCheckbox.checked = is2fa;
++			})
++			.catch (error => 
++			{
++				console.error('error:', error);	
++			})
+ 
+ 		twoFactorAuthContainer.appendChild(twoFactorAuthLabel);
+ 		twoFactorAuthContainer.appendChild(twoFactorAuthCheckbox);
+ 
+-		document.addEventListener('DOMContentLoaded', async () => {
++		twoFactorAuthCheckbox.addEventListener('change', async() => {
+ 			const	is2fa = await getUser2FAStatus();
+-			if (is2fa !== null) {
+-				twoFactorAuthCheckbox.checked = is2fa;
+-			}
+-		});
+-
+-		twoFactorAuthCheckbox.addEventListener('change', () => {
+-			const	is2fa = twoFactorAuthCheckbox.checked;
+-			updateUser2FAStatus(is2fa);
++			
++			if (is2fa == true)
++				await updateUser2FAStatus(false);
++			else
++				await updateUser2FAStatus(true);
+ 		});
+ 
+ 		/************** ANONYMIZE DATA **************/
+@@ -616,7 +621,7 @@ async function saveProfileChanges(userData_edit)
+ 	try
+ 	{
+ 
+-		const	response = await apiRequest('/api/users/updateProfile/',
++		await apiRequest('/api/users/updateProfile/',
+ 		{
+ 			method: 'PUT',
+ 			headers: {  
+@@ -691,7 +696,7 @@ async function updateUserAnonymousStatus()
+ {
+ 	try
+ 	{
+-		const	response = await apiRequest('/api/users/updateAnonymousStatus/',
++		await apiRequest('/api/users/updateAnonymousStatus/',
+ 		{
+ 			method: 'PUT',
+ 			headers:
+@@ -716,7 +721,7 @@ async function anonymizeUserData()
+ {
+     try
+     {
+-        const response = await apiRequest('/api/users/anonymizeUserData/',
++        await apiRequest('/api/users/anonymizeUserData/',
+         {
+             method: 'PUT',
+             headers:
+@@ -794,18 +799,18 @@ async function updateUser2FAStatus(is2fa)
+ {
+ 	try
+ 	{
+-		const	response = await apiRequest('/api/users/update2FAStatus/',
++		await apiRequest('/api/users/update2FAStatus/',
+ 		{
+ 			method: 'PUT',
+ 			headers:
+ 			{
+-				'Authorization': `Bearer ${localStorage.getItem('token')}`,
++				// 'Authorization': `Bearer ${localStorage.getItem('token')}`,
+ 				'X-CSRFToken': getCookie('csrftoken'),
+ 				'Content-Type': 'application/json',
+ 			},
+ 			body: JSON.stringify({ is2fa }),
+ 		});
+-
++		console.log('2fa envoye a update = ', is2fa); 
+ 		console.log('2FA status updated successfully.');
+ 
+ 	}
+diff --git a/src/nginx/conf/nginx.conf b/src/nginx/conf/nginx.conf
+index 92f74332..a3a32d9f 100644
+--- a/src/nginx/conf/nginx.conf
++++ b/src/nginx/conf/nginx.conf
+@@ -32,6 +32,10 @@ http {
+         }
+ 
+         location / {
++            if ($request_uri ~* ^(.+)/$) {
++                return 301 www://$host:4430$1;
++            }
++            
+             try_files $uri $uri/ /index.html;
+         }
+ 
+diff --git a/src/user/user_management/api_user/views.py b/src/user/user_management/api_user/views.py
+index bc0bcd8b..f9912085 100644
+--- a/src/user/user_management/api_user/views.py
++++ b/src/user/user_management/api_user/views.py
+@@ -532,7 +532,7 @@ def get2FAStatus(request):
+ 		if not user.is_authenticated:
+ 			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+ 
+-		return JsonResponse({user.is2fa}, status=status.HTTP_200_OK)
++		return JsonResponse({'is2fa': user.is2fa}, status=status.HTTP_200_OK)
+ 
+ 	except Exception as e:
+ 		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
